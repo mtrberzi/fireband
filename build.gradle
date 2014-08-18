@@ -1,0 +1,36 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin:'application'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+mainClassName = "io.lp0onfire.fireband.Main"
+
+run {
+  standardInput = System.in
+  args ''
+}
+
+dependencies {
+  testCompile 'junit:junit:4.11'
+  compile 'log4j:log4j:1.2.16'
+  compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+}
+
+buildscript {
+  repositories {
+    mavenCentral()
+    maven {
+        name 'JFrog OSS snapshot repo'
+        url  'https://oss.jfrog.org/oss-snapshot-local/'
+    }
+    jcenter()
+  }
+}
+
+
+test {
+  testLogging.showStandardStreams = true
+}
+
