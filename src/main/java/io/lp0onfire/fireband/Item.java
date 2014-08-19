@@ -2,15 +2,22 @@ package io.lp0onfire.fireband;
 
 public abstract class Item {
   // Global item properties
+  private String name;
+  public String getName(){return name;}
+  
   private ItemType type;
   public ItemType getType(){return type;}
   
-  private double baseWeight = 0.0;
-  public double getBaseWeight(){return baseWeight;}
+  // The unit of weight is the tenth-pound.
+  private int baseWeight = 0;
+  public int getBaseWeight(){return baseWeight;}
+  
+  private int baseValue = 0;
+  public int getBaseValue(){return baseValue;}
   
   // Generic item predicates.
   public boolean canBeWielded() {
-    if(type == ItemType.TYPE_BOW || type == ItemType.TYPE_WEAPON) {
+    if(type == ItemType.TYPE_WEAPON) {
       return true;
     } else {
       return false;
@@ -42,7 +49,10 @@ public abstract class Item {
     }
   }
   
-  public Item(ItemType type){
+  public Item(ItemType type, String name, int baseWeight, int baseValue){
     this.type = type;
+    this.name = name;
+    this.baseWeight = baseWeight;
+    this.baseValue = baseValue;
   }
 }

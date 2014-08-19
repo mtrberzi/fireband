@@ -1,5 +1,8 @@
 package io.lp0onfire.fireband;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Affix {
   private String name;
   public String getName(){return name;}
@@ -9,18 +12,6 @@ public class Affix {
   private boolean prefix = true;
   public boolean isPrefix(){return prefix;}
   
-  // TODO refactor this out into a general "Effect" class
-  
-  // Modifiers for all items.
-  private double itemWeightFactor = 0.0;
-  private double itemValueFactor = 0.0;
-  
-  // Modifiers for weapons.
-  private int weaponToHitBonus = 0;
-  private double weaponDamageFactor = 0.0;
-  
-  // Modifiers for armour.
-  private int armourACBonus = 0;
-  private int armourToHitBonus = 0;
+  private List<Effect> effects = new ArrayList<Effect>();
   
 }

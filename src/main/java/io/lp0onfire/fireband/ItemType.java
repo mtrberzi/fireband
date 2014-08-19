@@ -1,7 +1,6 @@
 package io.lp0onfire.fireband;
 
 public enum ItemType {
-  TYPE_BOW,
   TYPE_WEAPON,
   TYPE_ARMOUR_BODY,
   TYPE_ARMOUR_CLOAK,

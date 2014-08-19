@@ -33,7 +33,7 @@ public class Unit {
   // Equipment and inventory.
   private static final int MAX_INVENTORY_SIZE = 25;
   private List<Item> inventory = new ArrayList<Item>();
-  private Item equippedWeapon = null;
+  private Weapon equippedWeapon = null;
   private Item equippedArmour_amulet = null;
   private Item equippedArmour_body = null;
   private Item equippedArmour_cloak = null;
