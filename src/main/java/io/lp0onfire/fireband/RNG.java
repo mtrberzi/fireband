@@ -1,5 +1,6 @@
 package io.lp0onfire.fireband;
 
+import java.util.List;
 import java.util.Random;
 
 public class RNG {
@@ -49,6 +50,11 @@ public class RNG {
   public static boolean oneIn(int n){
     int i = roll(n);
     return(i == 1);
+  }
+  
+  public static <T> T randomEntry(List<T> entries){
+    int index = instance.random.nextInt(entries.size());
+    return entries.get(index);
   }
   
 }

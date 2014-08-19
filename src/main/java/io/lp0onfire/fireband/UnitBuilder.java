@@ -47,33 +47,38 @@ public class UnitBuilder {
       throw new IllegalArgumentException("cannot equip '" + i.getDisplayName() + "'");
     }
     switch(i.getType()) {
-    case TYPE_ARMOUR_AMULET:
-      equippedArmour_amulet = i;
-      break;
-    case TYPE_ARMOUR_BODY:
-      equippedArmour_body = i;
-      break;
-    case TYPE_ARMOUR_CLOAK:
-      equippedArmour_cloak = i;
-      break;
-    case TYPE_ARMOUR_FEET:
-      equippedArmour_feet = i;
-      break;
-    case TYPE_ARMOUR_HANDS:
-      equippedArmour_hands = i;
-      break;
-    case TYPE_ARMOUR_HEAD:
-      equippedArmour_head = i;
-      break;
-    case TYPE_ARMOUR_RING:
-      if(equippedArmour_ringR == null){
-        equippedArmour_ringR = i;
-      }else{
-        equippedArmour_ringL = i;
+    case TYPE_ARMOUR:
+      Armour a = (Armour)i;
+      switch(a.getArmourType()){
+      case ARMOUR_AMULET:
+        equippedArmour_amulet = i;
+        break;
+      case ARMOUR_BODY:
+        equippedArmour_body = i;
+        break;
+      case ARMOUR_CLOAK:
+        equippedArmour_cloak = i;
+        break;
+      case ARMOUR_FEET:
+        equippedArmour_feet = i;
+        break;
+      case ARMOUR_HANDS:
+        equippedArmour_hands = i;
+        break;
+      case ARMOUR_HEAD:
+        equippedArmour_head = i;
+        break;
+      case ARMOUR_RING:
+        if(equippedArmour_ringR == null){
+          equippedArmour_ringR = i;
+        }else{
+          equippedArmour_ringL = i;
+        }
+        break;
+      case ARMOUR_SHIELD:
+        equippedArmour_shield = i;
+        break;
       }
-      break;
-    case TYPE_ARMOUR_SHIELD:
-      equippedArmour_shield = i;
       break;
     case TYPE_WEAPON:
       equippedWeapon = i;

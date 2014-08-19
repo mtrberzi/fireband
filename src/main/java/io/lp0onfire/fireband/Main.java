@@ -47,14 +47,30 @@ public class Main {
     // for fun
     WeaponGenerator wGen = new WeaponGenerator();
     wGen.setItemQualityFactor(10);
+    wGen.guaranteeDecentObject();
     Weapon w = wGen.generateWeapon();
     log.info(w.getDisplayName());
+    
+    ArmourGenerator aGen = new ArmourGenerator();
+    aGen.setItemQualityFactor(10);
+    aGen.guaranteeDecentObject();
+    aGen.allowOnlyBodyArmour();
+    Armour a = aGen.generateArmour();
+    log.info(a.getDisplayName());
+    
+    UnitBuilder uBuild = new UnitBuilder();
+    uBuild.setName("Robin");
+    uBuild.setPronoun(Pronoun.PRONOUN_NEUTRAL);
+    uBuild.equip(w);
+    Unit u = uBuild.build();
   }
   
   private void loadResources(String resourcePath) throws IOException, JSONException{
     // Load resources
     String baseWeaponData = load(resourcePath + "objects/baseWeapons.json");
     BaseWeapons.instance.loadWeapons(baseWeaponData);
+    String baseArmourData = load(resourcePath + "objects/baseArmour.json");
+    BaseArmour.instance.loadArmour(baseArmourData);
   }
   
 }

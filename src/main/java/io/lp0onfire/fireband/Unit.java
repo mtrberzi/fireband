@@ -49,15 +49,15 @@ public class Unit {
   }
   
   private Weapon equippedWeapon = null;
-  private Item equippedArmour_amulet = null;
-  private Item equippedArmour_body = null;
-  private Item equippedArmour_cloak = null;
-  private Item equippedArmour_feet = null;
-  private Item equippedArmour_hands = null;
-  private Item equippedArmour_head = null;
-  private Item equippedArmour_ringL = null;
-  private Item equippedArmour_ringR = null;
-  private Item equippedArmour_shield = null;
+  private Armour equippedArmour_amulet = null;
+  private Armour equippedArmour_body = null;
+  private Armour equippedArmour_cloak = null;
+  private Armour equippedArmour_feet = null;
+  private Armour equippedArmour_hands = null;
+  private Armour equippedArmour_head = null;
+  private Armour equippedArmour_ringL = null;
+  private Armour equippedArmour_ringR = null;
+  private Armour equippedArmour_shield = null;
   
   private void processEquipWeapon(Weapon w){
     if(w == null) return;

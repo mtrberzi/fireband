@@ -106,9 +106,7 @@ public class WeaponGenerator {
     if(allowedWeaponTypes.isEmpty()){
       throw new IllegalStateException("all weapon types disallowed");
     }
-    WeaponType weaponType = allowedWeaponTypes.get(
-        RNG.roll(allowedWeaponTypes.size()) - 1
-        );
+    WeaponType weaponType = RNG.randomEntry(allowedWeaponTypes);
     log.debug("Generating " + weaponType.toString());
     List<Weapon> baseWeapons = BaseWeapons.instance.getBaseWeaponsByType(weaponType);
     if(baseWeapons.isEmpty()){
@@ -133,9 +131,7 @@ public class WeaponGenerator {
     if(baseWeapons.isEmpty()){
       throw new IllegalStateException("no possible base weapons allowed");
     }
-    Weapon baseWeapon = baseWeapons.get(
-        RNG.roll(baseWeapons.size()) - 1
-        );
+    Weapon baseWeapon = RNG.randomEntry(baseWeapons);
     log.debug("Base weapon is " + baseWeapon.getDisplayName());
     
     boolean isGood = false;

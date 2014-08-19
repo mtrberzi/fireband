@@ -3,8 +3,6 @@ package io.lp0onfire.fireband;
 import java.util.List;
 
 public class Weapon extends Item {
-
-  // mandatory items
   
   private WeaponType weaponType;
   public WeaponType getWeaponType(){return weaponType;}

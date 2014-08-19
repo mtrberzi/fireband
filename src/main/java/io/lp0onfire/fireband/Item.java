@@ -23,25 +23,10 @@ public abstract class Item {
   
   // Generic item predicates.
   public boolean canBeWielded() {
-    if(type == ItemType.TYPE_WEAPON) {
-      return true;
-    } else {
-      return false;
-    }
+    return (type == ItemType.TYPE_WEAPON);
   }
   public boolean canBeWorn(){
-    if(type == ItemType.TYPE_ARMOUR_AMULET
-        || type == ItemType.TYPE_ARMOUR_BODY
-        || type == ItemType.TYPE_ARMOUR_CLOAK
-        || type == ItemType.TYPE_ARMOUR_FEET
-        || type == ItemType.TYPE_ARMOUR_HANDS
-        || type == ItemType.TYPE_ARMOUR_HEAD
-        || type == ItemType.TYPE_ARMOUR_RING
-        || type == ItemType.TYPE_ARMOUR_SHIELD) {
-      return true;
-    } else {
-      return false;
-    }
+    return (type == ItemType.TYPE_ARMOUR);
   }
   public boolean canBeUsed(){
     if(type == ItemType.TYPE_POTION
@@ -56,6 +41,7 @@ public abstract class Item {
   }
   
   public static String getDisplayName(Item item, int count){
+    // FIXME distinguish between % for plural and % for suffix, as in "Set(s) of Gloves"
     StringBuilder sb = new StringBuilder();
     String formatString = item.getName();
     // The format string will look like "%p name%s"
