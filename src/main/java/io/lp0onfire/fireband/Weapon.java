@@ -56,41 +56,4 @@ public class Weapon extends Item {
     this.range = range;
   }
   
-  public static Weapon buildFromJSON(JSONObject obj) throws JSONException{
-    String name = obj.getString("name");
-    int baseWeight = obj.getInt("weight");
-    int baseValue = obj.getInt("value");
-    WeaponType type = WeaponType.valueOf(obj.getString("type"));
-    // parse a damage string of the form "XdY"
-    String damage = obj.getString("damage");
-    int damageDice, damageDieSize;
-    int dIndex = damage.indexOf('d');
-    if(dIndex == -1){
-      throw new IllegalArgumentException("invalid damage string '" + damage + "'");
-    }else{
-      String sDice = damage.substring(0, dIndex);
-      String sDieSize = damage.substring(dIndex + 1);
-      damageDice = Integer.parseInt(sDice);
-      damageDieSize = Integer.parseInt(sDieSize);
-    }
-    DamageType damageType = DamageType.valueOf(obj.getString("damagetype"));
-    int criticalThreshold = obj.getInt("threshold");
-    int criticalMultiplier = obj.getInt("multiplier");
-    
-    // now for optional items
-    
-    Collection<Affix> affixes = new ArrayList<Affix>(); // TODO
-    
-    int toHitBonus = obj.optInt("toHit");
-    int toDamageBonus = obj.optInt("toDamage");
-    
-    int range = obj.optInt("range");
-    if(range == 0) range = 1;
-    
-    return new Weapon(name, baseWeight, baseValue, type,
-        damageDice, damageDieSize, damageType,
-        criticalThreshold, criticalMultiplier, affixes,
-        toHitBonus, toDamageBonus, range);
-  }
-  
 }

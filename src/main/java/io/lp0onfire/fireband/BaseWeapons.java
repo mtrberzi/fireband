@@ -34,8 +34,8 @@ public class BaseWeapons {
       String key = (String)keys.next();
       if(obj.get(key) instanceof JSONObject){
         JSONObject jObj = (JSONObject) obj.get(key);
-        Weapon w = Weapon.buildFromJSON(jObj);
-        baseWeapons.add(w);
+        WeaponBuilder wBuild = new WeaponBuilder(jObj);
+        baseWeapons.add(wBuild.build());
       }
     }
   }

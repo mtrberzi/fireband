@@ -1,7 +1,11 @@
 package io.lp0onfire.fireband;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class WeaponBuilder {
   private String name = "SORD.....";
@@ -45,6 +49,37 @@ public class WeaponBuilder {
     toHitBonus = base.getToHitBonus();
     toDamageBonus = base.getToDamageBonus();
     range = base.getRange();
+  }
+  
+  public WeaponBuilder(JSONObject obj) throws JSONException {
+    name = obj.getString("name");
+    baseWeight = obj.getInt("weight");
+    baseValue = obj.getInt("value");
+    type = WeaponType.valueOf(obj.getString("type"));
+    // parse a damage string of the form "XdY"
+    String damage = obj.getString("damage");
+    int dIndex = damage.indexOf('d');
+    if(dIndex == -1){
+      throw new IllegalArgumentException("invalid damage string '" + damage + "'");
+    }else{
+      String sDice = damage.substring(0, dIndex);
+      String sDieSize = damage.substring(dIndex + 1);
+      damageDice = Integer.parseInt(sDice);
+      damageDieSize = Integer.parseInt(sDieSize);
+    }
+    damageType = DamageType.valueOf(obj.getString("damagetype"));
+    criticalThreshold = obj.getInt("threshold");
+    criticalMultiplier = obj.getInt("multiplier");
+    
+    // now for optional items
+    
+    affixes = new ArrayList<Affix>(); // TODO
+    
+    toHitBonus = obj.optInt("toHit");
+    toDamageBonus = obj.optInt("toDamage");
+    
+    range = obj.optInt("range");
+    if(range == 0) range = 1;
   }
   
   public Weapon build(){
