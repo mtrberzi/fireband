@@ -38,6 +38,12 @@ public class WeaponGenerator {
     onlySimpleWeapons = true;
   }
   
+  private boolean guaranteedDecent = false;
+  // Guarantees that the item is average or better.
+  public void guaranteeDecentObject(){
+    this.guaranteedDecent = true;
+  }
+  
   private boolean guaranteedGood = false;
   public void guaranteeGoodObject(){
     this.guaranteedGood = true;
@@ -79,10 +85,12 @@ public class WeaponGenerator {
   }
   
   private boolean rollForCursedWeapon(){
+    if(guaranteedDecent) return false;
     return rollForGoodWeapon();
   }
   
   private boolean rollForDreadfulWeapon(){
+    if(guaranteedDecent) return false;
     return rollForGreatWeapon();
   }
   
@@ -128,6 +136,7 @@ public class WeaponGenerator {
     Weapon baseWeapon = baseWeapons.get(
         RNG.roll(baseWeapons.size()) - 1
         );
+    log.debug("Base weapon is " + baseWeapon.getDisplayName());
     
     boolean isGood = false;
     boolean isGreat = false;
@@ -151,6 +160,7 @@ public class WeaponGenerator {
     int damageDice = baseWeapon.getDamageDice();
     if(isGood){
       if(isGreat){
+        log.debug("Great weapon");
         // Great weapons get +(1d5 + mBonus(5) + mBonus(10)) to hit and to damage
         toHitBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
             + RNG.mBonus(10, getEffectiveItemQualityFactor());
@@ -167,23 +177,29 @@ public class WeaponGenerator {
         }
         // TODO affixes
       }else{
+        log.debug("Good weapon");
         // Good weapons get +(1d5 + mBonus(5)) to hit and to damage
         toHitBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor());
         toDamageBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor());
       }
     }else if (isCursed){
       if(isDreadful){
+        log.debug("Dreadful weapon");
         // Dreadful weapons get -(1d5 + mBonus(5) + mBonus(10)) to hit and to damage
         toHitBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
             + RNG.mBonus(10, getEffectiveItemQualityFactor())) * -1;
         toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
             + RNG.mBonus(10, getEffectiveItemQualityFactor())) * -1;
       }else{
+        log.debug("Cursed weapon");
         // Cursed weapons get -(1d5 + mBonus(5)) to hit and to damage
         toHitBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
         toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
       }
     }
+    log.debug("To-hit bonus: " + toHitBonus);
+    log.debug("To-damage bonus: " + toDamageBonus);
+    log.debug("Damage dice: " + damageDice);
     // now generate the weapon
     WeaponBuilder wBuilder = new WeaponBuilder(baseWeapon);
     wBuilder.setToHitBonus(toHitBonus);
