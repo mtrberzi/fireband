@@ -1,0 +1,9 @@
+{
+"elvenWeapon": {
+"name": "Elven",
+"prefix": true,
+"level": 10,
+"types": ["TYPE_WEAPON"],
+"effects": ["accuracy2", "lightness2"]
+},
+}

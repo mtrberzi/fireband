@@ -1,0 +1,19 @@
+{
+"accuracy1": {
+"toHitBonus": 1,
+"valueFactor": 0.10
+},
+"accuracy2": {
+"toHitBonus": 2,
+"valueFactor": 0.25
+},
+
+"lightness1": {
+"weightFactor": -0.05,
+"valueFactor": 0.50
+},
+"lightness2": {
+"weightFactor": -0.10,
+"valueFactor": 0.75
+},
+}

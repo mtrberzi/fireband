@@ -62,15 +62,21 @@ public class Main {
     uBuild.setName("Robin");
     uBuild.setPronoun(Pronoun.PRONOUN_NEUTRAL);
     uBuild.equip(w);
+    uBuild.equip(a);
     Unit u = uBuild.build();
   }
   
   private void loadResources(String resourcePath) throws IOException, JSONException{
     // Load resources
+    // lots of things depend on effects; load them first!
+    String effectData = load(resourcePath + "magic/effects.json");
+    Effects.instance.loadEffects(effectData);
     String baseWeaponData = load(resourcePath + "objects/baseWeapons.json");
     BaseWeapons.instance.loadWeapons(baseWeaponData);
     String baseArmourData = load(resourcePath + "objects/baseArmour.json");
     BaseArmour.instance.loadArmour(baseArmourData);
+    String affixData = load(resourcePath + "objects/affixes.json");
+    Affixes.instance.loadAffixes(affixData);
   }
   
 }
