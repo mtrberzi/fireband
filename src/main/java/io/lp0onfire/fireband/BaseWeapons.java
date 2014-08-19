@@ -1,15 +1,16 @@
 package io.lp0onfire.fireband;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class BaseWeapons {
+  private static Logger log = LogManager.getLogger("BaseWeapons");
   public final static BaseWeapons instance = new BaseWeapons();
   private BaseWeapons(){}
   
@@ -26,6 +27,15 @@ public class BaseWeapons {
     }
     return results;
   }
+  public List<Weapon> getBaseWeaponsBySimple(boolean isSimple){
+    List<Weapon> results = new ArrayList<Weapon>();
+    for(Weapon w : baseWeapons){
+      if(w.isSimpleWeapon() == isSimple){
+        results.add(w);
+      }
+    }
+    return results;
+  }
   
   public void loadWeapons(String weaponData) throws JSONException{
     JSONObject obj = new JSONObject(weaponData);
@@ -35,7 +45,9 @@ public class BaseWeapons {
       if(obj.get(key) instanceof JSONObject){
         JSONObject jObj = (JSONObject) obj.get(key);
         WeaponBuilder wBuild = new WeaponBuilder(jObj);
-        baseWeapons.add(wBuild.build());
+        Weapon w = wBuild.build();
+        log.debug("Loaded base weapon '" + key + "'");
+        baseWeapons.add(w);
       }
     }
   }

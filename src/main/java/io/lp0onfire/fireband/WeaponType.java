@@ -4,5 +4,5 @@ public enum WeaponType {
   WEAPON_BLUNT,
   WEAPON_POLEARM,
   WEAPON_EDGED,
-  WEAPON_BOW
+  WEAPON_MISSILE
 }

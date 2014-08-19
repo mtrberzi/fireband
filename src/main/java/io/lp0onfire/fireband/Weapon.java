@@ -35,6 +35,9 @@ public class Weapon extends Item {
   private int toDamageBonus = 0;
   public int getToDamageBonus(){return toDamageBonus;}
   
+  private boolean isSimple = false;
+  public boolean isSimpleWeapon(){return isSimple;}
+  
   private int range = 1;
   public int getRange(){return range;}
   
@@ -43,7 +46,8 @@ public class Weapon extends Item {
       int damageDice, int damageDieSize, DamageType damageType,
       int criticalThreshold, int criticalMultiplier,
       Collection<Affix> affixes,
-      int toHitBonus, int toDamageBonus, int range) {
+      int toHitBonus, int toDamageBonus, int range,
+      boolean isSimple) {
     super(ItemType.TYPE_WEAPON, name, baseWeight, baseValue);
     this.damageDice = damageDice;
     this.damageDieSize = damageDieSize;
@@ -54,6 +58,7 @@ public class Weapon extends Item {
     this.toHitBonus = toHitBonus;
     this.toDamageBonus = toDamageBonus;
     this.range = range;
+    this.isSimple = isSimple;
   }
   
 }

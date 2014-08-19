@@ -33,6 +33,10 @@ public class WeaponBuilder {
     toDamageBonus = n;
   }
   private int range = 1;
+  private boolean simple = false;
+  public void setIsSimple(boolean s){
+    simple = s;
+  }
   
   public WeaponBuilder(Weapon base){
     // copy everything from a template base weapon
@@ -49,6 +53,7 @@ public class WeaponBuilder {
     toHitBonus = base.getToHitBonus();
     toDamageBonus = base.getToDamageBonus();
     range = base.getRange();
+    simple = base.isSimpleWeapon();
   }
   
   public WeaponBuilder(JSONObject obj) throws JSONException {
@@ -80,12 +85,14 @@ public class WeaponBuilder {
     
     range = obj.optInt("range");
     if(range == 0) range = 1;
+    
+    simple = obj.optBoolean("simple");
   }
   
   public Weapon build(){
     return new Weapon(name, baseWeight, baseValue,
         type, damageDice, damageDieSize,
         damageType, criticalThreshold, criticalMultiplier,
-        affixes, toHitBonus, toDamageBonus, range);
+        affixes, toHitBonus, toDamageBonus, range, simple);
   }
 }

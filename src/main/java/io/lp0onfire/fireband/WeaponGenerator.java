@@ -11,20 +11,51 @@ public class WeaponGenerator {
   public void setItemQualityFactor(int iq){
     this.itemQualityFactor = iq;
   }
+  public int getEffectiveItemQualityFactor(){
+    int eq = itemQualityFactor;
+    // "Guaranteed good" generation boosts this by +10
+    if(guaranteedGood){
+      eq += 10;
+    }
+    return eq;
+  }
+  
   private Set<WeaponType> disallowedWeaponTypes = new HashSet<WeaponType>();
   private void disallowWeaponType(WeaponType type){
     disallowedWeaponTypes.add(type);
   }
   
+  private boolean noSimpleWeapons = false;
+  public void disallowSimpleWeapons(){
+    noSimpleWeapons = true;
+  }
+  private boolean onlySimpleWeapons = false;
+  public void allowOnlySimpleWeapons(){
+    onlySimpleWeapons = true;
+  }
+  
+  private boolean guaranteedGood = false;
+  public void guaranteeGoodObject(){
+    this.guaranteedGood = true;
+  }
+  
+  private boolean guaranteedGreat = false;
+  public void guaranteeGreatObject(){
+    this.guaranteedGreat = true;
+    // great implies good
+    this.guaranteedGood = true;
+  }
+  
   public WeaponGenerator(){}
   
   private int goodWeaponPercentChance(){
-    int threshold = 10 + itemQualityFactor;
+    int threshold = 10 + getEffectiveItemQualityFactor();
     if(threshold > 75) threshold = 75;
     return threshold;
   }
   
   private boolean rollForGoodWeapon(){
+    if(guaranteedGood) return true;
     int threshold = goodWeaponPercentChance();
     int roll = RNG.roll(100);
     return (roll <= threshold);
@@ -37,6 +68,7 @@ public class WeaponGenerator {
   }
   
   private boolean rollForGreatWeapon(){
+    if(guaranteedGreat) return true;
     int threshold = greatWeaponPercentChance();
     int roll = RNG.roll(100);
     return (roll <= threshold);
@@ -65,6 +97,22 @@ public class WeaponGenerator {
         RNG.roll(allowedWeaponTypes.size()) - 1
         );
     List<Weapon> baseWeapons = BaseWeapons.instance.getBaseWeaponsByType(weaponType);
+    // exclude by simplicity
+    List<Weapon> wrongSimpleWeapons = new ArrayList<Weapon>();
+    if(noSimpleWeapons && onlySimpleWeapons){
+      throw new IllegalStateException("both simple and non-simple weapons disallowed");
+    }else if(noSimpleWeapons){
+      wrongSimpleWeapons = BaseWeapons.instance.getBaseWeaponsBySimple(true);
+    }else if(onlySimpleWeapons){
+      wrongSimpleWeapons = BaseWeapons.instance.getBaseWeaponsBySimple(false);
+    }
+    for(Weapon w : wrongSimpleWeapons){
+      baseWeapons.remove(w);
+    }
+    // final check to see if there are any weapons left
+    if(baseWeapons.size() == 0){
+      throw new IllegalStateException("no possible base weapons allowed");
+    }
     Weapon baseWeapon = baseWeapons.get(
         RNG.roll(baseWeapons.size()) - 1
         );
@@ -86,17 +134,16 @@ public class WeaponGenerator {
       }
     }
     
-    boolean isNormal = !(isGood || isGreat || isCursed || isDreadful);
     int toHitBonus = 0;
     int toDamageBonus = 0;
     int damageDice = baseWeapon.getDamageDice();
     if(isGood){
       if(isGreat){
         // Great weapons get +(1d5 + mBonus(5) + mBonus(10)) to hit and to damage
-        toHitBonus = RNG.roll(5) + RNG.mBonus(5, itemQualityFactor)
-            + RNG.mBonus(10, itemQualityFactor);
-        toDamageBonus = RNG.roll(5) + RNG.mBonus(5, itemQualityFactor)
-            + RNG.mBonus(10, itemQualityFactor);
+        toHitBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
+            + RNG.mBonus(10, getEffectiveItemQualityFactor());
+        toDamageBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
+            + RNG.mBonus(10, getEffectiveItemQualityFactor());
         // Try boosting the damage dice (1 in 10*X*Y for an XdY weapon)
         // This can happen until the roll fails or until X=9
         while(damageDice < 9){
@@ -109,20 +156,20 @@ public class WeaponGenerator {
         // TODO affixes
       }else{
         // Good weapons get +(1d5 + mBonus(5)) to hit and to damage
-        toHitBonus = RNG.roll(5) + RNG.mBonus(5, itemQualityFactor);
-        toDamageBonus = RNG.roll(5) + RNG.mBonus(5, itemQualityFactor);
+        toHitBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor());
+        toDamageBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor());
       }
     }else if (isCursed){
       if(isDreadful){
         // Dreadful weapons get -(1d5 + mBonus(5) + mBonus(10)) to hit and to damage
-        toHitBonus = (RNG.roll(5) + RNG.mBonus(5, itemQualityFactor)
-            + RNG.mBonus(10, itemQualityFactor)) * -1;
-        toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, itemQualityFactor)
-            + RNG.mBonus(10, itemQualityFactor)) * -1;
+        toHitBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
+            + RNG.mBonus(10, getEffectiveItemQualityFactor())) * -1;
+        toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
+            + RNG.mBonus(10, getEffectiveItemQualityFactor())) * -1;
       }else{
         // Cursed weapons get -(1d5 + mBonus(5)) to hit and to damage
-        toHitBonus = (RNG.roll(5) + RNG.mBonus(5, itemQualityFactor)) * -1;
-        toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, itemQualityFactor)) * -1;
+        toHitBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
+        toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
       }
     }
     // now generate the weapon
