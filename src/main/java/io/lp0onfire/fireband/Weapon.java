@@ -1,11 +1,6 @@
 package io.lp0onfire.fireband;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Weapon extends Item {
 
@@ -25,10 +20,6 @@ public class Weapon extends Item {
   public int getCriticalThreshold(){return criticalThreshold;}
   private int criticalMultiplier = 1;
   public int getCriticalMultiplier(){return criticalMultiplier;}
-
-  // optional items
-  private List<Affix> affixes;
-  public List<Affix> getAffixes(){return affixes;}
   
   private int toHitBonus = 0;
   public int getToHitBonus(){return toHitBonus;}
@@ -45,16 +36,16 @@ public class Weapon extends Item {
       WeaponType weaponType,
       int damageDice, int damageDieSize, DamageType damageType,
       int criticalThreshold, int criticalMultiplier,
-      Collection<Affix> affixes,
+      List<Affix> affixes,
       int toHitBonus, int toDamageBonus, int range,
       boolean isSimple) {
-    super(ItemType.TYPE_WEAPON, name, baseWeight, baseValue);
+    super(ItemType.TYPE_WEAPON, name, baseWeight, baseValue, affixes);
+    this.weaponType = weaponType;
     this.damageDice = damageDice;
     this.damageDieSize = damageDieSize;
     this.damageType = damageType;
     this.criticalThreshold = criticalThreshold;
     this.criticalMultiplier = criticalMultiplier;
-    this.affixes = new ArrayList<Affix>(affixes);
     this.toHitBonus = toHitBonus;
     this.toDamageBonus = toDamageBonus;
     this.range = range;

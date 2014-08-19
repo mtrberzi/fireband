@@ -21,7 +21,7 @@ public class BaseWeapons {
   public List<Weapon> getBaseWeaponsByType(WeaponType type){
     List<Weapon> results = new ArrayList<Weapon>();
     for(Weapon w : baseWeapons){
-      if(w.getType().equals(type)){
+      if(w.getWeaponType().equals(type)){
         results.add(w);
       }
     }
@@ -49,6 +49,13 @@ public class BaseWeapons {
         log.debug("Loaded base weapon '" + key + "'");
         baseWeapons.add(w);
       }
+    }
+    // print statistics
+    log.info(Integer.toString(baseWeapons.size()) + " total weapons");
+    for(WeaponType type : WeaponType.values()){
+      List<Weapon> weaponsByType = getBaseWeaponsByType(type);
+      log.info(Integer.toString(weaponsByType.size()) + " "
+          + type.toString() + " weapons");
     }
   }
 }

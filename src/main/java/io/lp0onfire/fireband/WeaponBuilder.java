@@ -61,6 +61,9 @@ public class WeaponBuilder {
     baseWeight = obj.getInt("weight");
     baseValue = obj.getInt("value");
     type = WeaponType.valueOf(obj.getString("type"));
+    if(type == null){
+      throw new IllegalArgumentException("unknown weapon type '" + obj.getString("type") + "'");
+    }
     // parse a damage string of the form "XdY"
     String damage = obj.getString("damage");
     int dIndex = damage.indexOf('d');
@@ -73,6 +76,9 @@ public class WeaponBuilder {
       damageDieSize = Integer.parseInt(sDieSize);
     }
     damageType = DamageType.valueOf(obj.getString("damagetype"));
+    if(damageType == null){
+      throw new IllegalArgumentException("unknown damage type '" + obj.getString("damagetype") + "'");
+    }
     criticalThreshold = obj.getInt("threshold");
     criticalMultiplier = obj.getInt("multiplier");
     

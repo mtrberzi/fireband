@@ -44,6 +44,11 @@ public class Main {
   
   private void run() throws IOException, JSONException{
     loadResources(librariesPath);
+    // for fun
+    WeaponGenerator wGen = new WeaponGenerator();
+    wGen.setItemQualityFactor(10);
+    Weapon w = wGen.generateWeapon();
+    log.info(w.getDisplayName());
   }
   
   private void loadResources(String resourcePath) throws IOException, JSONException{

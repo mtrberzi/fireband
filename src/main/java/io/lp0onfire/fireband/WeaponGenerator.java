@@ -5,7 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class WeaponGenerator {
+  private static Logger log = LogManager.getLogger("WeaponGenerator");
   // Generation parameters
   private int itemQualityFactor = 0;
   public void setItemQualityFactor(int iq){
@@ -21,7 +25,7 @@ public class WeaponGenerator {
   }
   
   private Set<WeaponType> disallowedWeaponTypes = new HashSet<WeaponType>();
-  private void disallowWeaponType(WeaponType type){
+  public void disallowWeaponType(WeaponType type){
     disallowedWeaponTypes.add(type);
   }
   
@@ -88,6 +92,7 @@ public class WeaponGenerator {
       allowedWeaponTypes.add(type);
     }
     for(WeaponType type : disallowedWeaponTypes){
+      log.debug("Disallowing " + type.toString());
       allowedWeaponTypes.remove(type);
     }
     if(allowedWeaponTypes.isEmpty()){
@@ -96,21 +101,28 @@ public class WeaponGenerator {
     WeaponType weaponType = allowedWeaponTypes.get(
         RNG.roll(allowedWeaponTypes.size()) - 1
         );
+    log.debug("Generating " + weaponType.toString());
     List<Weapon> baseWeapons = BaseWeapons.instance.getBaseWeaponsByType(weaponType);
+    if(baseWeapons.isEmpty()){
+      throw new IllegalStateException("no weapons of type '"
+          + weaponType.toString() + "' defined");
+    }
     // exclude by simplicity
     List<Weapon> wrongSimpleWeapons = new ArrayList<Weapon>();
     if(noSimpleWeapons && onlySimpleWeapons){
       throw new IllegalStateException("both simple and non-simple weapons disallowed");
     }else if(noSimpleWeapons){
+      log.debug("Excluding simple weapons");
       wrongSimpleWeapons = BaseWeapons.instance.getBaseWeaponsBySimple(true);
     }else if(onlySimpleWeapons){
+      log.debug("Excluding non-simple weapons");
       wrongSimpleWeapons = BaseWeapons.instance.getBaseWeaponsBySimple(false);
     }
     for(Weapon w : wrongSimpleWeapons){
       baseWeapons.remove(w);
     }
     // final check to see if there are any weapons left
-    if(baseWeapons.size() == 0){
+    if(baseWeapons.isEmpty()){
       throw new IllegalStateException("no possible base weapons allowed");
     }
     Weapon baseWeapon = baseWeapons.get(
