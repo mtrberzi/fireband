@@ -1,6 +1,6 @@
 {
 "robe": {
-"name": "%p Robe%s",
+"name": "%p Robe%s%u",
 "weight": 20,
 "value": 4,
 "type": "ARMOUR_BODY",
@@ -8,7 +8,7 @@
 },
 
 "cloak": {
-"name": "%p Cloak%s",
+"name": "%p Cloak%s%u",
 "weight": 10,
 "value": 3,
 "type": "ARMOUR_CLOAK",
@@ -16,7 +16,7 @@
 },
 
 "leatherboots": {
-"name": "%p Pair%s of Leather Boots",
+"name": "%p Pair%s of Leather Boots%u",
 "weight": 20,
 "value": 7,
 "type": "ARMOUR_FEET",
@@ -24,7 +24,7 @@
 },
 
 "leathergloves": {
-"name": "%p Set%s of Leather Gloves",
+"name": "%p Set%s of Leather Gloves%u",
 "weight": 10,
 "value": 5,
 "type": "ARMOUR_HANDS",
@@ -32,7 +32,7 @@
 },
 
 "hardleathercap": {
-"name": "%p Hard Leather Cap%s",
+"name": "%p Hard Leather Cap%s%u",
 "weight": 20,
 "value": 12,
 "type": "ARMOUR_HEAD",
@@ -40,7 +40,7 @@
 },
 
 "buckler": {
-"name": "%p Buckler%s",
+"name": "%p Buckler%s%u",
 "weight": 20,
 "value": 30,
 "type": "ARMOUR_SHIELD",

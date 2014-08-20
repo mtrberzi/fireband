@@ -2,6 +2,7 @@ package io.lp0onfire.fireband;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -94,6 +95,20 @@ public class WeaponGenerator {
     return rollForGreatWeapon();
   }
   
+  private int rollAffixLevel(){
+    // Similar to the "ego generation level" in Angband.
+    // Most of the time this comes out to itemQualityFactor,
+    // but 1 time in 20 we "supercharge" and
+    // use itemQualityFactor * (128 / 1d128) + 1 instead
+    if(RNG.oneIn(20)){
+      log.debug("Supercharged affix level");
+      double superchargeFactor = 128.0 / (double)RNG.roll(128);
+      return (int)Math.ceil(itemQualityFactor * superchargeFactor) + 1;
+    }else{
+      return itemQualityFactor;
+    }
+  }
+  
   public Weapon generateWeapon(){
     List<WeaponType> allowedWeaponTypes = new ArrayList<WeaponType>();
     for(WeaponType type : WeaponType.values()){
@@ -154,6 +169,8 @@ public class WeaponGenerator {
     int toHitBonus = 0;
     int toDamageBonus = 0;
     int damageDice = baseWeapon.getDamageDice();
+    List<Affix> affixes = new ArrayList<Affix>();
+    // TODO balance random perturbations and affixes
     if(isGood){
       if(isGreat){
         log.debug("Great weapon");
@@ -171,7 +188,6 @@ public class WeaponGenerator {
             break;
           }
         }
-        // TODO affixes
       }else{
         log.debug("Good weapon");
         // Good weapons get +(1d5 + mBonus(5)) to hit and to damage
@@ -193,14 +209,67 @@ public class WeaponGenerator {
         toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
       }
     }
+    
+    List<Affix> compatibleAffixes = Affixes.instance.getAffixesByItemType(ItemType.TYPE_WEAPON);
+    int affixLevel = rollAffixLevel();
+    log.debug("Using affix level " + affixLevel);
+    // Exclude affixes below this level
+    Iterator<Affix> it = compatibleAffixes.iterator();
+    while(it.hasNext()){
+      Affix a = it.next();
+      if(a.getMinimumLevel() < affixLevel){
+        // Keep an out-of-depth affix one time in (out-of-depth factor + 1)
+        if(!RNG.oneIn((affixLevel - a.getMinimumLevel()) + 1)){
+          it.remove();
+        }
+      }
+      // Additionally, on good or great objects, throw out any
+      // affix that has any component effect that lowers the value of the item
+      if(isGood || isGreat){
+        for(Effect e : a.getEffects()){
+          if(e.getItemValueFactor() < 0.0){
+            it.remove();
+            break;
+          }
+        }
+      }
+    }
+    // if there is anything left...
+    if(!compatibleAffixes.isEmpty()){
+      // Great items get a few more attempts to receive an affix
+      int affixAttempts = 10;
+      if(isGreat){
+        affixAttempts += 10;
+      }
+      for(int i = 0; i < affixAttempts; ++i){
+        int affixDifficulty = (int)Math.ceil(Math.pow(10, affixes.size() + 1));
+        if(RNG.oneIn(affixDifficulty)){
+          Affix a = RNG.randomEntry(compatibleAffixes);
+          compatibleAffixes.remove(a);
+          affixes.add(a);
+        }
+        if(compatibleAffixes.isEmpty()) break;
+      }
+    }
+    
     log.debug("To-hit bonus: " + toHitBonus);
     log.debug("To-damage bonus: " + toDamageBonus);
     log.debug("Damage dice: " + damageDice);
+    if(!affixes.isEmpty()){
+      log.debug("Affixes:");
+      for(Affix a : affixes){
+        log.debug("* " + a.getName());
+      }
+    }
+    
     // now generate the weapon
     WeaponBuilder wBuilder = new WeaponBuilder(baseWeapon);
     wBuilder.setToHitBonus(toHitBonus);
     wBuilder.setToDamageBonus(toDamageBonus);
     wBuilder.setDamageDice(damageDice);
+    for(Affix a : affixes){
+      wBuilder.addAffix(a);
+    }
     return wBuilder.build();
   }
 }

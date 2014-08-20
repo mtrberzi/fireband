@@ -24,7 +24,7 @@ public class Affixes {
   }
   
   public List<Affix> getAffixesByItemType(ItemType type){
-    return affixes.get(type);
+    return new ArrayList<Affix>(affixes.get(type));
   }
   
   public void loadAffixes(String affixData) throws JSONException{

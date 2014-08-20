@@ -16,7 +16,7 @@ public class BaseArmour {
   
   private List<Armour> baseArmour = new ArrayList<Armour>();
   public List<Armour> getBaseArmour(){
-    return baseArmour;
+    return new ArrayList<Armour>(baseArmour);
   }
   public List<Armour> getBaseArmourByType(ArmourType type){
     List<Armour> results = new ArrayList<Armour>();

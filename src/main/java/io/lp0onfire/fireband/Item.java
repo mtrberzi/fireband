@@ -45,11 +45,11 @@ public abstract class Item {
     StringBuilder sb = new StringBuilder();
     String formatString = item.getName();
     // The format string will look like "%p name%s"
-    // We substitute %p for the particle (a/the/count)
+    // We substitute %p for the particle (a/an/the/count)
     // followed by zero or more prefixes;
     // each prefix is preceded by a space.
-    // %s is substituted for the appropriate singular/plural ending,
-    // followed by zero or more suffixes;
+    // %s is substituted for the appropriate singular/plural ending.
+    // %u is substituted for zero or more suffixes;
     // each suffix is preceded by one of the following:
     // * " of " if it is the first suffix
     // * ", " if it is not the first or last suffix
@@ -66,7 +66,7 @@ public abstract class Item {
         {
           // TODO artifact prefix "the"
           if(count == 1){
-            sb.append("a");
+            sb.append("%a"); // we need to do a second pass for the particle
           }else{
             sb.append(count);
           }
@@ -76,7 +76,7 @@ public abstract class Item {
             }
           }
         } break;
-        case 's': // suffix
+        case 's': // plural form
         {
           // TODO irregular plural forms
           if(count == 1){
@@ -85,6 +85,9 @@ public abstract class Item {
             // plural ending
             sb.append("s");
           }
+        } break;
+        case 'u': // suffixes
+        {
           int suffixCount = 0;
           for(Affix a : item.getAffixes()){
             if(!a.isPrefix()){
@@ -111,6 +114,36 @@ public abstract class Item {
         default:
           throw new IllegalArgumentException(
               "Unknown escape code '%" + escapeCode + "' in format string '"
+              + formatString + "'");
+        }
+      }else{
+        sb.append(c);
+      }
+    }
+    String firstPassResult = sb.toString();
+    sb = new StringBuilder();
+    // now do a second pass looking for %a
+    for(int i = 0; i < firstPassResult.length(); ++i){
+      char c = firstPassResult.charAt(i);
+      if(c == '%'){
+        char escapeCode = firstPassResult.charAt(i+1);
+        i += 1;
+        if(escapeCode == 'a'){
+          // this is not how English articles work but it is close:
+          // look ahead for the first non-space character we see,
+          // and if it is a vowel, the particle is "an";
+          // otherwise it is "a".
+          String lookahead = firstPassResult.substring(i + 1).trim();
+          char v = Character.toLowerCase(lookahead.charAt(0));
+          if(v == 'a' || v == 'e' || v == 'i' || v == 'o' || v == 'u'){
+            sb.append("an");
+          }else{
+            sb.append("a");
+          }
+        }else{
+          throw new IllegalArgumentException(
+              "Unknown escape code '%" + escapeCode 
+              + "' in second-pass format string '"
               + formatString + "'");
         }
       }else{

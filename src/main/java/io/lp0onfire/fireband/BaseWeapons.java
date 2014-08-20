@@ -16,7 +16,7 @@ public class BaseWeapons {
   
   private List<Weapon> baseWeapons = new ArrayList<Weapon>();
   public List<Weapon> getBaseWeapons(){
-    return baseWeapons;
+    return new ArrayList<Weapon>(baseWeapons);
   }
   public List<Weapon> getBaseWeaponsByType(WeaponType type){
     List<Weapon> results = new ArrayList<Weapon>();

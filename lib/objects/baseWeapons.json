@@ -1,6 +1,6 @@
 {
 "dagger": {
-"name": "%p Dagger%s",
+"name": "%p Dagger%s%u",
 "weight": 12,
 "value": 30,
 "type": "WEAPON_EDGED",
@@ -11,7 +11,7 @@
 "simple": true
 },
 "maingauche": {
-"name": "%p Main Gauche%s",
+"name": "%p Main Gauche%s%u",
 "weight": 30,
 "value": 45,
 "type": "WEAPON_EDGED",
@@ -21,7 +21,7 @@
 "multiplier": 2
 },
 "rapier": {
-"name": "%p Rapier%s",
+"name": "%p Rapier%s%u",
 "weight": 40,
 "value": 75,
 "type": "WEAPON_EDGED",
@@ -31,7 +31,7 @@
 "multiplier": 2
 },
 "shortsword": {
-"name": "%p Short Sword%s",
+"name": "%p Short Sword%s%u",
 "weight": 80,
 "value": 90,
 "type": "WEAPON_EDGED",
@@ -42,7 +42,7 @@
 },
 
 "lightmace": {
-"name": "%p Light Mace%s",
+"name": "%p Light Mace%s%u",
 "weight": 120,
 "value": 130,
 "type": "WEAPON_BLUNT",
@@ -53,7 +53,7 @@
 "simple": true
 },
 "quarterstaff": {
-"name": "%p Quarterstaff%s",
+"name": "%p Quarterstaff%s%u",
 "weight": 150,
 "value": 200,
 "type": "WEAPON_BLUNT",
@@ -65,7 +65,7 @@
 },
 
 "spear": {
-"name": "%p Spear%s",
+"name": "%p Spear%s%u",
 "weight": 50,
 "value": 36,
 "type": "WEAPON_POLEARM",
@@ -76,7 +76,7 @@
 "simple": true
 },
 "halberd": {
-"name": "%p Halberd%s",
+"name": "%p Halberd%s%u",
 "weight": 190,
 "value": 430,
 "type": "WEAPON_POLEARM",
@@ -87,7 +87,7 @@
 },
 
 "sling": {
-"name": "%p Sling%s",
+"name": "%p Sling%s%u",
 "weight": 5,
 "value": 5,
 "type": "WEAPON_MISSILE",
@@ -99,7 +99,7 @@
 "range": 3
 },
 "lightcrossbow": {
-"name": "%p Light Crossbow%s",
+"name": "%p Light Crossbow%s%u",
 "weight": 110,
 "value": 140,
 "type": "WEAPON_MISSILE",
@@ -111,7 +111,7 @@
 "range": 2
 },
 "heavycrossbow": {
-"name": "%p Heavy Crossbow%s",
+"name": "%p Heavy Crossbow%s%u",
 "weight": 200,
 "value": 300,
 "type": "WEAPON_MISSILE",
@@ -122,7 +122,7 @@
 "range": 3
 },
 "shortbow": {
-"name": "%p Short Bow%s",
+"name": "%p Short Bow%s%u",
 "weight": 30,
 "value": 50,
 "type": "WEAPON_MISSILE",
@@ -133,7 +133,7 @@
 "range": 2
 },
 "longbow": {
-"name": "%p Long Bow%s",
+"name": "%p Long Bow%s%u",
 "weight": 40,
 "value": 120,
 "type": "WEAPON_MISSILE",

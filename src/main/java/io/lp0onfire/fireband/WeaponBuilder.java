@@ -24,6 +24,10 @@ public class WeaponBuilder {
   private int criticalThreshold = 20;
   private int criticalMultiplier = 1;
   private List<Affix> affixes = new ArrayList<Affix>();
+  public void addAffix(Affix a){
+    // TODO check duplicate affixes
+    affixes.add(a);
+  }
   private int toHitBonus = 0;
   public void setToHitBonus(int n){
     toHitBonus = n;
