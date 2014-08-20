@@ -41,7 +41,6 @@ public abstract class Item {
   }
   
   public static String getDisplayName(Item item, int count){
-    // FIXME distinguish between % for plural and % for suffix, as in "Set(s) of Gloves"
     StringBuilder sb = new StringBuilder();
     String formatString = item.getName();
     // The format string will look like "%p name%s"

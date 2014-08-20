@@ -16,4 +16,9 @@
 "weightFactor": -0.10,
 "valueFactor": 0.75
 },
+
+"protection1": {
+"acBonus": 1,
+"valueFactor": 0.25
+},
 }

@@ -6,4 +6,11 @@
 "types": ["TYPE_WEAPON"],
 "effects": ["accuracy2", "lightness2"]
 },
+"elvenArmour": {
+"name": "Elven",
+"prefix": true,
+"level": 10,
+"types": ["TYPE_ARMOUR"],
+"effects": ["lightness1", "protection1"] 
+},
 }

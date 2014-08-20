@@ -11,6 +11,10 @@ public class ArmourBuilder {
   private int baseWeight = 0;
   private int baseValue = 0;
   private List<Affix> affixes = new ArrayList<Affix>();
+  public void addAffix(Affix a){
+    // TODO check for duplicate affixes
+    affixes.add(a);
+  }
   private ArmourType type = ArmourType.ARMOUR_BODY;
   private boolean isHeavy = false;
   private int baseArmourClass = 0;

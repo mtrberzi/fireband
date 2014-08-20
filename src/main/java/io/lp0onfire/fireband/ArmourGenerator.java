@@ -117,6 +117,20 @@ public class ArmourGenerator {
     return rollForGreatArmour();
   }
   
+  private int rollAffixLevel(){
+    // Similar to the "ego generation level" in Angband.
+    // Most of the time this comes out to itemQualityFactor,
+    // but 1 time in 20 we "supercharge" and
+    // use itemQualityFactor * (128 / 1d128) + 1 instead
+    if(RNG.oneIn(20)){
+      log.debug("Supercharged affix level");
+      double superchargeFactor = 128.0 / (double)RNG.roll(128);
+      return (int)Math.ceil(itemQualityFactor * superchargeFactor) + 1;
+    }else{
+      return itemQualityFactor;
+    }
+  }
+  
   private Armour generateBodyArmour(ArmourType type){
     List<Armour> baseArmourList = BaseArmour.instance.getBaseArmourByType(type);
     if(baseArmourList.isEmpty()){
@@ -165,6 +179,8 @@ public class ArmourGenerator {
     }
     
     int armourClassBonus = 0;
+    List<Affix> affixes = new ArrayList<Affix>();
+    // TODO balance random perturbations and affixes
     if(isGood){
       if(isGreat){
         log.debug("Great armour");
@@ -192,9 +208,61 @@ public class ArmourGenerator {
             + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
       }
     }
+    
+    List<Affix> compatibleAffixes = Affixes.instance.getAffixesByItemType(ItemType.TYPE_ARMOUR);
+    int affixLevel = rollAffixLevel();
+    log.debug("Using affix level " + affixLevel);
+    // Exclude affixes below this level
+    Iterator<Affix> it = compatibleAffixes.iterator();
+    while(it.hasNext()){
+      Affix a = it.next();
+      if(a.getMinimumLevel() < affixLevel){
+        // Keep an out-of-depth affix one time in (out-of-depth factor + 1)
+        if(!RNG.oneIn((affixLevel - a.getMinimumLevel()) + 1)){
+          it.remove();
+        }
+      }
+      // Additionally, on good or great objects, throw out any
+      // affix that has any component effect that lowers the value of the item
+      if(isGood || isGreat){
+        for(Effect e : a.getEffects()){
+          if(e.getItemValueFactor() < 0.0){
+            it.remove();
+            break;
+          }
+        }
+      }
+    }
+    // if there is anything left...
+    if(!compatibleAffixes.isEmpty()){
+      // Great items get a few more attempts to receive an affix
+      int affixAttempts = 10;
+      if(isGreat){
+        affixAttempts += 10;
+      }
+      for(int i = 0; i < affixAttempts; ++i){
+        int affixDifficulty = (int)Math.ceil(Math.pow(10, affixes.size() + 1));
+        if(RNG.oneIn(affixDifficulty)){
+          Affix a = RNG.randomEntry(compatibleAffixes);
+          compatibleAffixes.remove(a);
+          affixes.add(a);
+        }
+        if(compatibleAffixes.isEmpty()) break;
+      }
+    }
+    
     log.debug("AC bonus: " + armourClassBonus);
+    if(!affixes.isEmpty()){
+      log.debug("Affixes:");
+      for(Affix a : affixes){
+        log.debug("* " + a.getName());
+      }
+    }
     ArmourBuilder aBuilder = new ArmourBuilder(baseArmour);
     aBuilder.setArmourClassBonus(armourClassBonus);
+    for(Affix a : affixes){
+      aBuilder.addAffix(a);
+    }
     return aBuilder.build();
   }
   

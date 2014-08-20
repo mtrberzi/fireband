@@ -19,6 +19,7 @@ public class Affix {
   
   private Set<ItemType> allowedItemTypes;
   public Set<ItemType> getAllowedItemTypes(){return allowedItemTypes;}
+  // TODO affix restrictions by sub-item types (e.g. weapon type, armour type)
   private List<Effect> effects;
   public List<Effect> getEffects(){return effects;}
   
