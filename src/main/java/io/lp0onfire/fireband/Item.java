@@ -11,6 +11,9 @@ public abstract class Item {
   private ItemType type;
   public ItemType getType(){return type;}
   
+  public abstract String getDescription();
+  public abstract String getFullDescription();
+  
   // The unit of weight is the tenth-pound.
   private int baseWeight = 0;
   public int getBaseWeight(){return baseWeight;}
@@ -69,7 +72,8 @@ public abstract class Item {
     // The format string will look like "%p name%s"
     // We substitute %p for the particle (a/an/the/count)
     // followed by zero or more prefixes;
-    // each prefix is preceded by a space.
+    // each prefix is preceded by a space,
+    // and a comma if it is not the first.
     // %s is substituted for the appropriate singular/plural ending.
     // %u is substituted for zero or more suffixes;
     // each suffix is preceded by one of the following:
@@ -92,9 +96,15 @@ public abstract class Item {
           }else{
             sb.append(count);
           }
+          boolean firstPrefix = true;
           for(Affix a : item.getAffixes()){
             if(a.isPrefix()){
-              sb.append(" ").append(a.getName());
+              if(firstPrefix){
+                sb.append(" ").append(a.getName());
+                firstPrefix = false;
+              }else{
+                sb.append(", ").append(a.getName());
+              }
             }
           }
         } break;

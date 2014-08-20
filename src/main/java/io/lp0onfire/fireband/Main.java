@@ -50,6 +50,8 @@ public class Main {
     wGen.guaranteeDecentObject();
     Weapon w = wGen.generateWeapon();
     log.info(w.getDisplayName());
+    log.info(w.getDescription());
+    log.info(w.getFullDescription());
     
     ArmourGenerator aGen = new ArmourGenerator();
     aGen.setItemQualityFactor(10);
@@ -57,6 +59,8 @@ public class Main {
     aGen.allowOnlyBodyArmour();
     Armour a = aGen.generateArmour();
     log.info(a.getDisplayName());
+    log.info(a.getDescription());
+    log.info(a.getFullDescription());
     
     UnitBuilder uBuild = new UnitBuilder();
     uBuild.setName("Robin");

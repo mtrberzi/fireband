@@ -28,6 +28,16 @@ public class RNG {
     return sum;
   }
   
+  // Expected value of rolling 1dY.
+  public static double expectedValue(int y){
+    return (double)(1 + y) / 2.0;
+  }
+  
+  // Expected value of rolling XdY.
+  public static double expectedValue(int x, int y){
+    return x * expectedValue(y);
+  }
+  
   public static double normal(double mean, double standardDeviation){
     return instance.random.nextGaussian()*standardDeviation + mean;
   }
