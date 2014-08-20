@@ -30,6 +30,37 @@ public class Weapon extends Item {
   private int range = 1;
   public int getRange(){return range;}
   
+  public int getEffectiveDamageDice(){
+    int base = getDamageDice();
+    for(Affix a : getAffixes()){
+      for(Effect e : a.getEffects()){
+        base += e.getWeaponExtraDamageDice();
+      }
+    }
+    if(base < 1) base = 1;
+    return base;
+  }
+  
+  public int getEffectiveToHitBonus(){
+    int base = getToHitBonus();
+    for(Affix a : getAffixes()){
+      for(Effect e : a.getEffects()){
+        base += e.getWeaponToHitBonus();
+      }
+    }
+    return base;
+  }
+  public double getEffectiveDamageFactor(){
+    double base = 1.0;
+    for(Affix a : getAffixes()){
+      for(Effect e : a.getEffects()){
+        base += e.getWeaponDamageFactor();
+      }
+    }
+    if(base < 0.0) base = 0.0;
+    return base;
+  }
+  
   public Weapon(String name, int baseWeight, int baseValue,
       WeaponType weaponType,
       int damageDice, int damageDieSize, DamageType damageType,

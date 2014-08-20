@@ -14,9 +14,32 @@ public abstract class Item {
   // The unit of weight is the tenth-pound.
   private int baseWeight = 0;
   public int getBaseWeight(){return baseWeight;}
+  public int getEffectiveWeight(){
+    int base = getBaseWeight();
+    double fin = base;
+    for(Affix a : getAffixes()){
+      for(Effect e : a.getEffects()){
+        fin += base * e.getItemWeightFactor();
+      }
+    }
+    if(fin < 0.0) fin = 0.0;
+    return (int)Math.floor(fin);
+  }
   
   private int baseValue = 0;
   public int getBaseValue(){return baseValue;}
+  public int getEffectiveValue(){
+    int base = getBaseValue();
+    double fin = base;
+    // TODO perturbation factors on weapons/armour
+    for(Affix a : getAffixes()){
+      for(Effect e : a.getEffects()){
+        fin += base * e.getItemValueFactor();
+      }
+    }
+    if(fin < 0.0) fin = 0.0;
+    return (int)Math.floor(fin);
+  }
   
   private List<Affix> affixes;
   public List<Affix> getAffixes(){return affixes;}
