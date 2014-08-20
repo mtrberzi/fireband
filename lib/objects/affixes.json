@@ -29,11 +29,11 @@
 "effects": ["protection1"]
 },
 
-"rustedObject": {
-"name": "Rusted",
+"wornObject": {
+"name": "Worn-Out",
 "prefix": true,
 "level": 1,
 "types": ["TYPE_WEAPON", "TYPE_ARMOUR"],
-"effects": ["rust1"]
+"effects": ["degraded1"]
 },
 }
