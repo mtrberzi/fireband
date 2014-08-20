@@ -221,6 +221,7 @@ public class WeaponGenerator {
         // Keep an out-of-depth affix one time in (out-of-depth factor + 1)
         if(!RNG.oneIn((affixLevel - a.getMinimumLevel()) + 1)){
           it.remove();
+          continue;
         }
       }
       // Additionally, on good or great objects, throw out any

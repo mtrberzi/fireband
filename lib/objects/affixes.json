@@ -13,4 +13,27 @@
 "types": ["TYPE_ARMOUR"],
 "effects": ["lightness1", "protection1"] 
 },
+
+"qualityWeapon": {
+"name": "Quality",
+"prefix": true,
+"level": 3,
+"types": ["TYPE_WEAPON"],
+"effects": ["accuracy1", "lightness1"]
+},
+"qualityArmour": {
+"name": "Quality",
+"prefix": true,
+"level": 3,
+"types": ["TYPE_ARMOUR"],
+"effects": ["protection1"]
+},
+
+"rustedObject": {
+"name": "Rusted",
+"prefix": true,
+"level": 1,
+"types": ["TYPE_WEAPON", "TYPE_ARMOUR"],
+"effects": ["rust1"]
+},
 }

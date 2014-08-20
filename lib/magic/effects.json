@@ -21,4 +21,11 @@
 "acBonus": 1,
 "valueFactor": 0.25
 },
+
+"rust1": {
+"acBonus": -2,
+"toHitBonus": -1,
+"valueFactor": -0.50
+},
+
 }
