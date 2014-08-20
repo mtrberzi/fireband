@@ -30,6 +30,7 @@ public class ArmourBuilder {
     affixes = new ArrayList<Affix>(base.getAffixes());
     type = base.getArmourType();
     isHeavy = base.isHeavyArmour();
+    baseArmourClass = base.getBaseArmourClass();
     armourClassBonus = base.getArmourClassBonus();
     armourCheckPenalty = base.getArmourCheckPenalty();
   }

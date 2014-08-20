@@ -13,7 +13,30 @@ public class Armour extends Item {
   }
   
   public String getFullDescription(){
-    return "It's armour.";
+    StringBuilder sb = new StringBuilder();
+    String br = System.getProperty("line.separator");
+    // describe the weight and value
+    sb.append(String.format("It weighs %d.%d pounds and is worth %d gold piece%s.",
+        getEffectiveWeight() / 10, getEffectiveWeight() % 10,
+        getEffectiveValue(),
+        getEffectiveValue() == 1 ? "" : "s")).append(br);
+    // describe armour class
+    if(getEffectiveArmourClassBonus() == 0){
+      sb.append(String.format("It provides a total Armour Class of %d.",
+          getEffectiveArmourClass()));
+    }else{
+      sb.append("It provides a base protection of ").append(getBaseArmourClass());
+      if(getEffectiveArmourClassBonus() > 0){
+        sb.append(String.format(" and an additional +%d enhancement bonus ",
+            getEffectiveArmourClassBonus()));
+      }else{
+        sb.append(String.format(" but with a %d penalty ",
+            getEffectiveArmourClassBonus()));
+      }
+      sb.append("for a total Armour Class of ")
+      .append(getEffectiveArmourClass()).append(".").append(br);
+    }
+    return sb.toString();
   }
   
   // optional items
@@ -77,6 +100,7 @@ public class Armour extends Item {
     super(ItemType.TYPE_ARMOUR, name, baseWeight, baseValue, affixes);
     this.armourType = armourType;
     this.isHeavy = isHeavy;
+    this.baseArmourClass = baseArmourClass;
     this.armourClassBonus = armourClassBonus;
     this.armourCheckPenalty = armourCheckPenalty;
   }
