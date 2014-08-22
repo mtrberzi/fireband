@@ -1,5 +1,6 @@
 {
 "wall": {
-"name": "Wall"
+"name": "Wall",
+"symbol": "#"
 },
 }

@@ -22,7 +22,9 @@ public class Features {
   
   private Feature buildFeature(JSONObject obj) throws JSONException{
     String name = obj.getString("name");
-    return new Feature(name);
+    String symbolString = obj.getString("symbol");
+    char symbol = symbolString.charAt(0);
+    return new Feature(name, symbol);
   }
   
   public void loadFeatures(String featureData) throws JSONException{
@@ -33,7 +35,7 @@ public class Features {
       if(obj.get(key) instanceof JSONObject){
         JSONObject jObj = (JSONObject) obj.get(key);
         Feature f = buildFeature(jObj);
-        log.debug("Loaded feature '" + key + "'");
+        log.debug("Loaded feature '" + key + "' (" + f.getSymbol() + ")");
         features.put(key, f);
       }
     }

@@ -69,8 +69,9 @@ public class Main {
     uBuild.equip(a);
     Unit u = uBuild.build();
     
-    Battlefield map = new Battlefield(24, 48);
-    log.info(map.dumpTerrain());
+    BattlefieldGenerator fieldGen = new BattlefieldGenerator();
+    Battlefield field = fieldGen.generateBattlefield();
+    log.info(field.dumpTerrainAndFeatures());
   }
   
   private void loadResources(String resourcePath) throws IOException, JSONException{

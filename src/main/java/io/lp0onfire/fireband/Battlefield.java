@@ -9,6 +9,8 @@ public class Battlefield {
   public Tile getTile(int x, int y) throws OutOfBoundsException{
     return tiles.at(x, y);
   }
+  public int getWidth(){return tiles.getWidth();}
+  public int getHeight(){return tiles.getHeight();}
   
   public Battlefield(int width, int height){
     this.tiles = new Grid<Tile>(width, height);
@@ -23,25 +25,31 @@ public class Battlefield {
     }
   }
   
-  public String dumpTerrain(){
+  public String dumpTerrainAndFeatures(){
     StringBuilder sb = new StringBuilder();
     String br = System.getProperty("line.separator");
     sb.append(br);
-    for(int y = tiles.getHeight() - 1; y >= 0; --y){
-      for(int x = 0; x < tiles.getWidth(); ++x){
-        try {
-          Tile t = tiles.at(x, y);
-          Terrain terrain = t.getTerrain();
-          if(terrain == null){
-            sb.append(" ");
-          }else{
-            sb.append(terrain.getSymbol());
-          }
-        } catch (OutOfBoundsException e) {
-          log.error("unexpected bounds check error: " + e.getMessage());
+    try {
+      for(int y = tiles.getHeight() - 1; y >= 0; --y){
+        for(int x = 0; x < tiles.getWidth(); ++x){
+            Tile t = tiles.at(x, y);
+            Terrain terrain = t.getTerrain();
+            Feature feature = t.getFeature();
+            // Feature overrides terrain
+            if(feature == null){
+              if(terrain == null){
+                sb.append(" ");
+              }else{
+                sb.append(terrain.getSymbol());
+              }
+            }else{
+              sb.append(feature.getSymbol());
+            }
         }
+        sb.append(br);
       }
-      sb.append(br);
+    } catch (OutOfBoundsException e) {
+      log.error("unexpected bounds check error: " + e.getMessage());
     }
     return sb.toString();
   }

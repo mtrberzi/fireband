@@ -38,6 +38,12 @@ public class RNG {
     return x * expectedValue(y);
   }
   
+  // Generates an integer in the range [low, high].
+  public static int range(int low, int high){
+    int diff = high - low + 1;
+    return low + instance.random.nextInt(diff);
+  }
+  
   public static double normal(double mean, double standardDeviation){
     return instance.random.nextGaussian()*standardDeviation + mean;
   }

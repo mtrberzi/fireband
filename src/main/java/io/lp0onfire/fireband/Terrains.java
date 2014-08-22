@@ -35,7 +35,7 @@ public class Terrains {
       if(obj.get(key) instanceof JSONObject){
         JSONObject jObj = (JSONObject) obj.get(key);
         Terrain t = buildTerrain(jObj);
-        log.debug("Loaded terrain '" + key + "'");
+        log.debug("Loaded terrain '" + key + "' (" + t.getSymbol() + ")");
         terrains.put(key, t);
       }
     }
