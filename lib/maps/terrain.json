@@ -1,0 +1,7 @@
+{
+"floor": {
+"name": "Floor",
+"moveCost": 1,
+"symbol": "."
+},
+}

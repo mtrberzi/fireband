@@ -68,6 +68,9 @@ public class Main {
     uBuild.equip(w);
     uBuild.equip(a);
     Unit u = uBuild.build();
+    
+    Battlefield map = new Battlefield(24, 48);
+    log.info(map.dumpTerrain());
   }
   
   private void loadResources(String resourcePath) throws IOException, JSONException{
@@ -81,6 +84,11 @@ public class Main {
     BaseArmour.instance.loadArmour(baseArmourData);
     String affixData = load(resourcePath + "objects/affixes.json");
     Affixes.instance.loadAffixes(affixData);
+    
+    String terrainData = load(resourcePath + "maps/terrain.json");
+    Terrains.instance.loadTerrains(terrainData);
+    String featureData = load(resourcePath + "maps/features.json");
+    Features.instance.loadFeatures(featureData);
   }
   
 }
