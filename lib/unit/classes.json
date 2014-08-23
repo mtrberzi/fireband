@@ -1,0 +1,10 @@
+{
+"fighter": {
+"name": "Fighter",
+"baseAttackBonus": "BAB_FAST",
+"fortitudeSave": "SAVE_STRONG",
+"reflexSave": "SAVE_WEAK",
+"willSave": "SAVE_WEAK",
+"hitDie": 10
+},
+}

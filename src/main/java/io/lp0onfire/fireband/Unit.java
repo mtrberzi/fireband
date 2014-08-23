@@ -12,6 +12,8 @@ public class Unit {
   
   private Race race;
   public Race getRace(){return race;}
+  private UnitClass unitClass;
+  public UnitClass getUnitClass(){return unitClass;}
   
   private int baseStrength = 10;
   public int getBaseStrength(){return baseStrength;}
@@ -81,13 +83,14 @@ public class Unit {
     }
   }
   
-  public Unit(String name, Pronoun pronoun, Race race,
+  public Unit(String name, Pronoun pronoun, Race race, UnitClass unitClass,
       int level, long experience,
       int baseStrength, int baseDexterity, int baseConstitution,
       int baseIntelligence, int baseWisdom, int baseCharisma){
     this.name = name;
     this.pronoun = pronoun;
     this.race = race;
+    this.unitClass = unitClass;
     this.level = level;
     this.experience = experience;
     this.baseStrength = baseStrength;

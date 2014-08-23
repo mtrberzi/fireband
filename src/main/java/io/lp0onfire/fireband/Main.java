@@ -66,6 +66,7 @@ public class Main {
     uBuild.setName("Robin");
     uBuild.setPronoun(Pronoun.PRONOUN_NEUTRAL);
     uBuild.setRace(Races.instance.getRaceByName("human"));
+    uBuild.setUnitClass(UnitClasses.instance.getUnitClassByName("fighter"));
     uBuild.equip(w);
     uBuild.equip(a);
     Unit u = uBuild.build();
@@ -87,6 +88,8 @@ public class Main {
     String affixData = load(resourcePath + "objects/affixes.json");
     Affixes.instance.loadAffixes(affixData);
     
+    String classData = load(resourcePath + "unit/classes.json");
+    UnitClasses.instance.loadUnitClasses(classData);
     String raceData = load(resourcePath + "unit/races.json");
     Races.instance.loadRaces(raceData);
     

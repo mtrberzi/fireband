@@ -11,6 +11,8 @@ public class UnitBuilder {
   public void setPronoun(Pronoun pronoun){this.pronoun = pronoun;}
   private Race race; // TODO reasonable default
   public void setRace(Race r){this.race = r;}
+  private UnitClass unitClass; // TODO reasonable default
+  public void setUnitClass(UnitClass c){this.unitClass = c;}
   
   private int baseStrength = 10;
   public void setStrength(int a){this.baseStrength = a;}
@@ -93,7 +95,8 @@ public class UnitBuilder {
   }
   
   public Unit build(){
-    Unit u = new Unit(name, pronoun, race, level, experience,
+    Unit u = new Unit(name, pronoun, race, unitClass,
+        level, experience,
         baseStrength, baseDexterity, baseConstitution,
         baseIntelligence, baseWisdom, baseCharisma);
     // go through inventory
