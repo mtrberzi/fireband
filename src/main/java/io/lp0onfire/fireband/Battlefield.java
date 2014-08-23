@@ -33,17 +33,21 @@ public class Battlefield {
       for(int y = tiles.getHeight() - 1; y >= 0; --y){
         for(int x = 0; x < tiles.getWidth(); ++x){
             Tile t = tiles.at(x, y);
-            Terrain terrain = t.getTerrain();
-            Feature feature = t.getFeature();
-            // Feature overrides terrain
-            if(feature == null){
-              if(terrain == null){
-                sb.append(" ");
-              }else{
-                sb.append(terrain.getSymbol());
-              }
+            if(t.hasFlag(TileFlag.TILE_ALLOCATED)){
+              sb.append("a");
             }else{
-              sb.append(feature.getSymbol());
+              Terrain terrain = t.getTerrain();
+              Feature feature = t.getFeature();
+              // Feature overrides terrain
+              if(feature == null){
+                if(terrain == null){
+                  sb.append(" ");
+                }else{
+                  sb.append(terrain.getSymbol());
+                }
+              }else{
+                sb.append(feature.getSymbol());
+              }
             }
         }
         sb.append(br);

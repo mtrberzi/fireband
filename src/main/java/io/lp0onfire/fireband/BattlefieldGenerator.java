@@ -7,6 +7,35 @@ public class BattlefieldGenerator {
   private static Logger log = LogManager.getLogger("BattlefieldGenerator");
   public BattlefieldGenerator(){}
   
+  /**
+   * Expand in every direction from a given point, searching for tiles
+   * with TileFlag.TILE_ALLOCATED set. For each such tile, the terrain
+   * is changed and the flag and feature are cleared.
+   * @param field Battlefield to operate over
+   * @param x Starting x coordinate
+   * @param y Starting y coordinate
+   * @param floor Terrain to place in allocated area
+   */
+  private void fillAllocatedArea(Battlefield field, int x, int y, Terrain floor){
+    try{
+      Tile t = field.getTile(x, y);
+      if(t.hasFlag(TileFlag.TILE_ALLOCATED)){
+        t.clearFlag(TileFlag.TILE_ALLOCATED);
+        t.clearFeature();
+        t.setTerrain(floor);
+        // Recursive flood-fill
+        for(int dx = -1; dx <= 1; ++dx){
+          for(int dy = -1; dy <= 1; ++dy){
+            if(dx == 0 && dy == 0) continue;
+            fillAllocatedArea(field, x+dx, y+dy, floor);
+          }
+        }
+      }
+    }catch(OutOfBoundsException e){
+      return;
+    }
+  }
+  
   private void makeChamber(Battlefield field, Terrain floor, Feature wall,
       int x1, int y1, int x2, int y2) throws OutOfBoundsException {
     log.debug("Placing chamber in ("
@@ -22,31 +51,81 @@ public class BattlefieldGenerator {
     for(int y = y1; y <= y2; ++y){
       int x = x1;
       Tile t = field.getTile(x, y);
-      t.clearFlag(TileFlag.TILE_ALLOCATED);
-      t.setFeature(wall);
+      if(t.hasFlag(TileFlag.TILE_ALLOCATED)){
+        t.clearFlag(TileFlag.TILE_ALLOCATED);
+        t.setFeature(wall);
+      }
     }
     // * Right wall
     for(int y = y1; y <= y2; ++y){
       int x = x2;
       Tile t = field.getTile(x, y);
-      t.clearFlag(TileFlag.TILE_ALLOCATED);
-      t.setFeature(wall);
+      if(t.hasFlag(TileFlag.TILE_ALLOCATED)){
+        t.clearFlag(TileFlag.TILE_ALLOCATED);
+        t.setFeature(wall);
+      }
     }
     // * Top wall
     for(int x = x1; x <= x2; ++x){
       int y = y1;
       Tile t = field.getTile(x, y);
-      t.clearFlag(TileFlag.TILE_ALLOCATED);
-      t.setFeature(wall);
+      if(t.hasFlag(TileFlag.TILE_ALLOCATED)){
+        t.clearFlag(TileFlag.TILE_ALLOCATED);
+        t.setFeature(wall);
+      }
     }
     // * Bottom wall
     for(int x = x1; x <= x2; ++x){
       int y = y2;
       Tile t = field.getTile(x, y);
-      t.clearFlag(TileFlag.TILE_ALLOCATED);
-      t.setFeature(wall);
+      if(t.hasFlag(TileFlag.TILE_ALLOCATED)){
+        t.clearFlag(TileFlag.TILE_ALLOCATED);
+        t.setFeature(wall);
+      }
     }
-    // Try to make a few exits of width 1-3.
+    // Try to make a few exits.
+    int exitX, exitY;
+    for(int i = 0; i < 20; ++i){
+      if(RNG.oneIn(2)){
+        // Place on left or right wall.
+        if(RNG.oneIn(2)){
+          exitX = x1;
+        }else{
+          exitX = x2;
+        }
+        exitY = y1 + RNG.roll(y2-y1 - 1);
+      }else{
+        // Place on top or bottom wall.
+        if(RNG.oneIn(2)){
+          exitY = y1;
+        }else{
+          exitY = y2;
+        }
+        exitX = x1 + RNG.roll(x2-x1 - 1);
+      }
+      // If this is not a wall, try again.
+      Tile exitTile = field.getTile(exitX, exitY);
+      if(!wall.equals(exitTile.getFeature())) continue;
+      int wallCount = 0;
+      // The exit must have at most two walls next to it.
+      for(int dx = -1; dx <= 1; ++dx){
+        for(int dy = -1; dy <= 1; ++dy){
+          if(dx == 0 && dy == 0) continue;
+          try{
+            Tile checkTile = field.getTile(exitX + dx, exitY + dy);
+            if(wall.equals(checkTile.getFeature())) ++wallCount;
+          }catch(OutOfBoundsException e){
+            continue;
+          }
+        }
+      }
+      if(wallCount <= 2){
+        // Clear the feature here and allocate this tile.
+        exitTile.clearFeature();
+        exitTile.setFlag(TileFlag.TILE_ALLOCATED);
+        //return;
+      }
+    }
   }
   
   /**
@@ -89,11 +168,148 @@ public class BattlefieldGenerator {
       }
     }
     // Fill in tiny, narrow rooms.
+    for(int y = y1; y <= y2; ++y){
+      for(int x = x1; x <= x2; ++x){
+        try{
+          int wallCount = 0;
+          for(int dx = -1; dx <= 1; ++dx){
+            for(int dy = -1; dy <= 1; ++dy){
+              Tile adjTile = field.getTile(x + dx, y + dy);
+              if(wall.equals(adjTile.getFeature())) ++wallCount;
+            }
+          }
+          if(wallCount >= 5){
+            Tile t = field.getTile(x, y);
+            t.clearFlag(TileFlag.TILE_ALLOCATED);
+            t.setFeature(wall);
+          }
+        }catch(OutOfBoundsException e){
+          continue;
+        }
+      }
+    }
     // Pick a random allocated spot near the center of the room...
+    int startX = 0, startY = 0;
+    for(int i = 0; i < 50; ++i){
+      startX = x1 + (int)Math.round(RNG.normal(width/2, width/4));
+      startY = y1 + (int)Math.round(RNG.normal(height/2, height/4));
+      try{
+        Tile t = field.getTile(startX, startY);
+        if(t.hasFlag(TileFlag.TILE_ALLOCATED)) break;
+      }catch(OutOfBoundsException e){
+        // retry
+        i -= 1;
+        continue;
+      }
+    }
     // ...and start hollowing out the first room.
+    fillAllocatedArea(field, startX, startY, floor);
     // Attempt to change every in-room allocated tile to floor.
+    for(int i = 0; i < 10000; ++i){
+      // Assume this run will not change the map.
+      boolean update = false;
+      // Make new tunnels between allocated areas and floor.
+      for(int y = y1; y <= y2; ++y){
+        for(int x = x1; x <= x2; ++x){
+          try{
+            Tile t = field.getTile(x, y);
+            if(!t.hasFlag(TileFlag.TILE_ALLOCATED)) continue;
+            // Check horizontal and vertical directions.
+            for(int dy = -1; dy <= 1; ++dy){
+              for(int dx = -1; dx <= 1; ++dx){
+                if(dx == 0 && dy == 0) continue;
+                if(dx != 0 && dy != 0) continue;
+                try{
+                  Tile tAdj1 = field.getTile(x + dx, y + dy);
+                  // If this is a wall, try to expand through it
+                  if(wall.equals(tAdj1.getFeature())){
+                    // Keep looking in the same direction.
+                    Tile tAdj2 = field.getTile(x + 2*dx, y + 2*dy);
+                    if(tAdj2.hasFlag(TileFlag.TILE_ALLOCATED) 
+                        || floor.equals(tAdj2.getTerrain())){
+                      // If we find a room at tAdj2,
+                      // punch a hole in the wall at tAdj1
+                      // and expand the new room at (x,y).
+                      update = true;
+                      tAdj1.clearFeature();
+                      tAdj1.setTerrain(floor);
+                      fillAllocatedArea(field, x,y, floor);
+                    }else if(wall.equals(tAdj2.getFeature())){
+                      // If we find another wall, try to expand through *that*.
+                      Tile tAdj3 = field.getTile(x+3*dx, y+3*dy);
+                      if(tAdj3.hasFlag(TileFlag.TILE_ALLOCATED)
+                          || floor.equals(tAdj3.getTerrain())){
+                        // If we now find floor, punch a hole through
+                        // both walls at tAdj1 and tAdj2, and expand from (x,y).
+                        update = true;
+                        tAdj1.clearFeature();
+                        tAdj1.setTerrain(floor);
+                        tAdj2.clearFeature();
+                        tAdj2.setTerrain(floor);
+                        fillAllocatedArea(field, x,y, floor);
+                      }
+                    }
+                  }
+                }catch(OutOfBoundsException e){
+                  continue;
+                }
+              }
+            }
+          }catch(OutOfBoundsException e){
+            continue;
+          }
+        }
+      }
+      // Stop if this iteration did not modify the map.
+      if(!update) break;
+    }
+    // TODO refactor into subroutine
+    // Turn all floors adjacent to voids into walls.
+    for(int y = y1; y <= y2; ++y){
+      for(int x = x1; x <= x2; ++x){
+        try{
+          Tile t = field.getTile(x,y);
+          if(floor.equals(t.getTerrain())){
+            for(int dx = -1; dx <= 1; ++dx){
+              for(int dy = -1; dy <= 1; ++dy){
+                Tile tAdj = field.getTile(x+dx, y+dy);
+                if(tAdj.getTerrain() == null && tAdj.getFeature() == null){
+                  t.setFeature(wall);
+                }
+              }
+            }
+          }
+        }catch(OutOfBoundsException e){
+          continue;
+        }
+      }
+    }
     // Turn all walls and allocated tiles not adjacent to floor into voids.
-    
+    for(int y = y1; y <= y2; ++y){
+      for(int x = x1; x <= x2; ++x){
+        try{
+          Tile t = field.getTile(x,y);
+          if(wall.equals(t.getFeature()) || t.hasFlag(TileFlag.TILE_ALLOCATED)){
+            boolean adjFloor = false;
+            for(int dx = -1; dx <= 1; ++dx){
+              for(int dy = -1; dy <= 1; ++dy){
+                Tile tAdj = field.getTile(x+dx, y+dy);
+                if(floor.equals(tAdj.getTerrain())){
+                  adjFloor = true;
+                }
+              }
+            }
+            if(!adjFloor){
+              t.clearFlag(TileFlag.TILE_ALLOCATED);
+              t.clearFeature();
+              t.clearTerrain();
+            }
+          }
+        }catch(OutOfBoundsException e){
+          continue;
+        }
+      }
+    }
   }
   
   /**
