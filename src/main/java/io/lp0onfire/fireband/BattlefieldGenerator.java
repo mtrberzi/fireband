@@ -1,5 +1,11 @@
 package io.lp0onfire.fireband;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -38,8 +44,6 @@ public class BattlefieldGenerator {
   
   private void makeChamber(Battlefield field, Terrain floor, Feature wall,
       int x1, int y1, int x2, int y2) throws OutOfBoundsException {
-    log.debug("Placing chamber in ("
-        + x1 + "," + y1 + "),(" + x2 + "," + y2 + ")");
     // Allocate the entire room.
     for(int x = x1; x <= x2; ++x){
       for(int y = y1; y <= y2; ++y){
@@ -265,6 +269,7 @@ public class BattlefieldGenerator {
     }
     // TODO refactor into subroutine
     // Turn all floors adjacent to voids into walls.
+    /*
     for(int y = y1; y <= y2; ++y){
       for(int x = x1; x <= x2; ++x){
         try{
@@ -284,12 +289,107 @@ public class BattlefieldGenerator {
         }
       }
     }
-    // Turn all walls and allocated tiles not adjacent to floor into voids.
+    */
+    field.resetFlag(TileFlag.TILE_ALLOCATED);
+    // In order to make more complex maps, ensure all components are connected.
+    List<List<Tile>> components = new LinkedList<List<Tile>>();
+    for(int y = y1; y <= y2; ++y){
+      for(int x = x1; x <= x2; ++x){
+        try{
+          Tile t = field.getTile(x, y);
+          if(floor.equals(t.getTerrain()) && t.getFeature() == null){
+            // See if we have searched this tile yet.
+            if(!t.hasFlag(TileFlag.TILE_BLACK)){
+              List<Tile> component = new ArrayList<Tile>();
+              collectComponent(field, component, t, floor);
+              components.add(component);
+            }
+          }
+        }catch(OutOfBoundsException e){
+          continue;
+        }
+      }
+    }
+    // Now, repeatedly choose two random components and
+    // build a path between them, then unify their areas.
+    // Repeat this until there is only one component.
+    if(components.isEmpty()){
+      log.error("No components found");
+    }else{
+      log.debug(components.size() + " components");
+      while(components.size() > 1){
+        int a = RNG.range(0, components.size() - 1);
+        int b = a;
+        while(b == a){
+          b = RNG.range(0, components.size() - 1);
+        }
+        List<Tile> compA = components.get(a);
+        List<Tile> compB = components.get(b);
+        Tile pointA = RNG.randomEntry(compA);
+        Tile pointB = RNG.randomEntry(compB);
+        try{
+          buildCorridor(field, pointA, pointB, floor);
+          compA.addAll(compB);
+          components.remove(b);
+        }catch(OutOfBoundsException e){
+          log.error("Went out of bounds building corridor: " + e.getMessage());
+        }
+      }
+    }
+    field.resetFlag(TileFlag.TILE_BLACK);
+    field.resetFlag(TileFlag.TILE_GREY);
+    removeDisconnectedWalls(field, x1,y1, x2,y2, floor, wall);
+  }
+  
+  private void collectComponent(Battlefield field, 
+      List<Tile> component, Tile start, Terrain floor){
+    // If we've already been here, return.
+    if(start.hasFlag(TileFlag.TILE_GREY) || start.hasFlag(TileFlag.TILE_BLACK)){
+      return;
+    }
+    start.setFlag(TileFlag.TILE_GREY);
+    component.add(start);
+    int x = start.getX();
+    int y = start.getY();
+    // Check all neighbours.
+    for(int dx = -1; dx <= 1; ++dx){
+      for(int dy = -1; dy <= 1; ++dy){
+        if(dx == 0 && dy == 0) continue;
+        if(dx != 0 && dy != 0) continue;
+        try{
+          Tile tAdj = field.getTile(x+dx, y+dy);
+          if(floor.equals(tAdj.getTerrain()) && tAdj.getFeature() == null){
+            collectComponent(field, component, tAdj, floor);
+          }
+        }catch(OutOfBoundsException e){
+          continue;
+        }
+      }
+    }
+    start.setFlag(TileFlag.TILE_BLACK);
+  }
+  
+  /**
+   * Build a system of chambers. The entire map area is used by default.
+   * 
+   * @param field the Battlefield to be populated
+   * @param floor the Terrain that should be used as open floor
+   * @param wall the Feature that should be used as the chamber walls
+   */
+  private void placeChambers(Battlefield field, Terrain floor, Feature wall){
+    placeChambers(field, floor, wall,
+        0, 0, field.getWidth() - 1, field.getHeight() - 1);
+  }
+  
+  // Turn all walls not adjacent to floor into void (remove terrain and feature)
+  private void removeDisconnectedWalls(Battlefield field,
+      int x1, int y1, int x2, int y2,
+      Terrain floor, Feature wall){
     for(int y = y1; y <= y2; ++y){
       for(int x = x1; x <= x2; ++x){
         try{
           Tile t = field.getTile(x,y);
-          if(wall.equals(t.getFeature()) || t.hasFlag(TileFlag.TILE_ALLOCATED)){
+          if(wall.equals(t.getFeature())){
             boolean adjFloor = false;
             for(int dx = -1; dx <= 1; ++dx){
               for(int dy = -1; dy <= 1; ++dy){
@@ -312,16 +412,61 @@ public class BattlefieldGenerator {
     }
   }
   
-  /**
-   * Build a system of chambers. The entire map area is used by default.
-   * 
-   * @param field the Battlefield to be populated
-   * @param floor the Terrain that should be used as open floor
-   * @param wall the Feature that should be used as the chamber walls
-   */
-  private void placeChambers(Battlefield field, Terrain floor, Feature wall){
-    placeChambers(field, floor, wall,
-        0, 0, field.getWidth() - 1, field.getHeight() - 1);
+  private void buildCorridor(Battlefield field, Tile pointA, Tile pointB,
+      Terrain floor) throws OutOfBoundsException{
+    try{
+      int x = pointA.getX();
+      int y = pointA.getY();
+      int destX = pointB.getX();
+      int destY = pointB.getY();
+      log.debug("Building corridor from ("
+          + x + "," + y + ") to ("
+          + destX + "," + destY + ")");
+      int dx, dy;
+      if(pointB.getX() > pointA.getX()){
+        dx = 1;
+      }else if(pointB.getX() < pointA.getX()){
+        dx = -1;
+      }else{
+        dx = 0;
+      }
+      if(pointB.getY() > pointA.getY()){
+        dy = 1;
+      }else if(pointB.getY() < pointA.getY()){
+        dy = -1;
+      }else{
+        dy = 0;
+      }
+      while(x != destX || y != destY){
+        // Place floor at current location.
+        field.getTile(x,y).setTerrain(floor);
+        field.getTile(x,y).clearFeature();
+        // Decide which way to move next.
+        int dxNext = 0, dyNext = 0;
+        if(x == destX){
+          dxNext = 0;
+          dyNext = dy;
+        }else if(y == destY){
+          dyNext = 0;
+          dxNext = dx;
+        }else{
+          if(RNG.oneIn(2)){
+            // move in the x direction
+            dyNext = 0;
+            dxNext = dx;
+          }else{
+            // move in the y direction
+            dxNext = 0;
+            dyNext = dy;
+          }
+        }
+        x += dxNext;
+        y += dyNext;
+      }
+    }catch(OutOfBoundsException e){
+      log.error("while building corridor: " + e.getMessage());
+      throw e;
+    }
   }
   
   public Battlefield generateBattlefield(){

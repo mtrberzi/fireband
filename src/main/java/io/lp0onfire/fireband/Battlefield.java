@@ -17,7 +17,19 @@ public class Battlefield {
     try{
       for(int x = 0; x < width; ++x){
         for(int y = 0; y < height; ++y){
-          tiles.set(x, y, new Tile());
+          tiles.set(x, y, new Tile(x, y));
+        }
+      }
+    }catch(OutOfBoundsException e){
+      log.error("unexpected bounds check error: " + e.getMessage());
+    }
+  }
+  
+  public void resetFlag(TileFlag flag){
+    try{
+      for(int x = 0; x < tiles.getWidth(); ++x){
+        for(int y = 0; y < tiles.getHeight(); ++y){
+          getTile(x,y).clearFlag(flag);
         }
       }
     }catch(OutOfBoundsException e){
@@ -34,7 +46,7 @@ public class Battlefield {
         for(int x = 0; x < tiles.getWidth(); ++x){
             Tile t = tiles.at(x, y);
             if(t.hasFlag(TileFlag.TILE_ALLOCATED)){
-              sb.append("a");
+              sb.append("*");
             }else{
               Terrain terrain = t.getTerrain();
               Feature feature = t.getFeature();

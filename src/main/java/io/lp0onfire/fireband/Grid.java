@@ -18,7 +18,7 @@ public class Grid<T> {
   
   public void set(int x, int y, T item) throws OutOfBoundsException{
     assertBounds(x,y);
-    entries.get(x).add(y,item);
+    entries.get(x).set(y, item);
   }
   
   public T at(int x, int y) throws OutOfBoundsException{
@@ -33,9 +33,9 @@ public class Grid<T> {
     // allocate this.entries
     entries = new ArrayList<List<T>>(dimX);
     for(int x = 0; x < dimX; ++x){
-      entries.add(x, new ArrayList<T>(dimY));
+      entries.add(new ArrayList<T>(dimY));
       for(int y = 0; y < dimY; ++y){
-        entries.get(x).add(y, null);
+        entries.get(x).add(null);
       }
     }
   }
