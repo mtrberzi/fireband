@@ -10,6 +10,9 @@ public class Unit {
   private Pronoun pronoun;
   public Pronoun getPronoun(){return pronoun;}
   
+  private Race race;
+  public Race getRace(){return race;}
+  
   private int baseStrength = 10;
   public int getBaseStrength(){return baseStrength;}
   private int baseDexterity = 10;
@@ -22,8 +25,7 @@ public class Unit {
   public int getBaseWisdom(){return baseWisdom;}
   private int baseCharisma = 10;
   public int getBaseCharisma(){return baseCharisma;}
-  private int baseMovement = 6;
-  public int getBaseMovement(){return baseMovement;}
+  public int getBaseMovement(){return getRace().getBaseMovement();}
   
   private int level = 1; 
   public int getLevel(){return level;}
@@ -79,13 +81,13 @@ public class Unit {
     }
   }
   
-  public Unit(String name, Pronoun pronoun,
+  public Unit(String name, Pronoun pronoun, Race race,
       int level, long experience,
       int baseStrength, int baseDexterity, int baseConstitution,
-      int baseIntelligence, int baseWisdom, int baseCharisma,
-      int baseMovement){
+      int baseIntelligence, int baseWisdom, int baseCharisma){
     this.name = name;
     this.pronoun = pronoun;
+    this.race = race;
     this.level = level;
     this.experience = experience;
     this.baseStrength = baseStrength;
@@ -94,6 +96,5 @@ public class Unit {
     this.baseIntelligence = baseIntelligence;
     this.baseWisdom = baseWisdom;
     this.baseCharisma = baseCharisma;
-    this.baseMovement = baseMovement;
   }
 }

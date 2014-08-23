@@ -9,6 +9,8 @@ public class UnitBuilder {
   public void setName(String name){this.name = name;}
   private Pronoun pronoun = Pronoun.PRONOUN_NEUTRAL;
   public void setPronoun(Pronoun pronoun){this.pronoun = pronoun;}
+  private Race race; // TODO reasonable default
+  public void setRace(Race r){this.race = r;}
   
   private int baseStrength = 10;
   public void setStrength(int a){this.baseStrength = a;}
@@ -22,8 +24,6 @@ public class UnitBuilder {
   public void setWisdom(int a){this.baseWisdom = a;}
   private int baseCharisma = 10;
   public void setCharisma(int a){this.baseCharisma = a;}
-  private int baseMovement = 6;
-  public void setMovement(int a){this.baseMovement = a;}
   
   private int level = 1; 
   public void setLevel(int a){this.level = a;}
@@ -93,10 +93,9 @@ public class UnitBuilder {
   }
   
   public Unit build(){
-    Unit u = new Unit(name, pronoun, level, experience,
+    Unit u = new Unit(name, pronoun, race, level, experience,
         baseStrength, baseDexterity, baseConstitution,
-        baseIntelligence, baseWisdom, baseCharisma,
-        baseMovement);
+        baseIntelligence, baseWisdom, baseCharisma);
     // go through inventory
     for(Item i : inventory){
       u.acquire(i);
