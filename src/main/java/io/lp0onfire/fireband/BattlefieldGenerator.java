@@ -156,7 +156,7 @@ public class BattlefieldGenerator {
     for(int i = 0; i < nChambers; ++i){
       int size = 2 + RNG.roll(5);
       int w = size + RNG.roll(10);
-      int h = size + RNG.roll(4);
+      int h = size + RNG.roll(10);
       // Pick a lower-left corner at random...
       int chamber_x1 = RNG.range(x1, x2 - w);
       int chamber_y1 = RNG.range(y1, y2 - w);
