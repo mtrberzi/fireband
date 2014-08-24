@@ -5,8 +5,6 @@ public class Effect {
   // Modifiers for all items.
   private double itemWeightFactor = 0.0;
   public double getItemWeightFactor(){return itemWeightFactor;}
-  private double itemValueFactor = 0.0;
-  public double getItemValueFactor(){return itemValueFactor;}
   
   // Modifiers for weapons.
   private int weaponToHitBonus = 0;
@@ -24,13 +22,12 @@ public class Effect {
   private boolean armourCountsAsLight = false;
   public boolean getArmourCountsAsLight(){return armourCountsAsLight;}
   
-  public Effect(double itemWeightFactor, double itemValueFactor,
+  public Effect(double itemWeightFactor,
       int weaponToHitBonus, double weaponDamageFactor,
       int weaponExtraDamageDice,
       int armourClassBonus, int armourCheckPenaltyReduction,
       boolean armourCountsAsLight){
     this.itemWeightFactor = itemWeightFactor;
-    this.itemValueFactor = itemValueFactor;
     this.weaponToHitBonus = weaponToHitBonus;
     this.weaponDamageFactor = weaponDamageFactor;
     this.weaponExtraDamageDice = weaponExtraDamageDice;

@@ -7,6 +7,17 @@ public class Weapon extends Item {
   private WeaponType weaponType;
   public WeaponType getWeaponType(){return weaponType;}
   
+  @Override
+  public String getDisplayName(){
+    String enh = "";
+    if(getEnhancementBonus() > 0){
+      enh = " +" + getEnhancementBonus();
+    }else if(getEnhancementBonus() < 0){
+      enh = " -" + getEnhancementBonus()*-1;
+    }
+    return super.getDisplayName() + enh;
+  }
+  
   private String description = "Use it to attack your foes.";
   public String getDescription(){
     return description;
@@ -33,10 +44,10 @@ public class Weapon extends Item {
     // damage dice
     sb.append(getEffectiveDamageDice()).append("d")
       .append(getDamageDieSize());
-    if(getToDamageBonus() > 0){
-      sb.append(" + ").append(getToDamageBonus());
-    }else if(getToDamageBonus() < 0){
-      sb.append(" - ").append(getToDamageBonus() * -1);
+    if(getEnhancementBonus() > 0){
+      sb.append(" + ").append(getEnhancementBonus());
+    }else if(getEnhancementBonus() < 0){
+      sb.append(" - ").append(getEnhancementBonus() * -1);
     }
     if(getEffectiveDamageFactor() == 1.0){
       sb.append(") damage");
@@ -66,10 +77,8 @@ public class Weapon extends Item {
   private int criticalMultiplier = 1;
   public int getCriticalMultiplier(){return criticalMultiplier;}
   
-  private int toHitBonus = 0;
-  public int getToHitBonus(){return toHitBonus;}
-  private int toDamageBonus = 0;
-  public int getToDamageBonus(){return toDamageBonus;}
+  private int enhancementBonus = 0;
+  public int getEnhancementBonus(){return enhancementBonus;}
   
   private boolean isSimple = false;
   public boolean isSimpleWeapon(){return isSimple;}
@@ -89,7 +98,7 @@ public class Weapon extends Item {
   }
   
   public int getEffectiveToHitBonus(){
-    int base = getToHitBonus();
+    int base = getEnhancementBonus();
     for(Affix a : getAffixes()){
       for(Effect e : a.getEffects()){
         base += e.getWeaponToHitBonus();
@@ -118,7 +127,7 @@ public class Weapon extends Item {
   public double getExpectedDamage(){
     // TODO extra damage from affix brands, etc.
     double baseRoll = RNG.expectedValue(getEffectiveDamageDice(), getDamageDieSize());
-    baseRoll += getToDamageBonus();
+    baseRoll += getEnhancementBonus();
     baseRoll *= getEffectiveDamageFactor();
     if(baseRoll < 0.0) return 0.0;
     return baseRoll;
@@ -129,7 +138,7 @@ public class Weapon extends Item {
       int damageDice, int damageDieSize, DamageType damageType,
       int criticalThreshold, int criticalMultiplier,
       List<Affix> affixes,
-      int toHitBonus, int toDamageBonus, int range,
+      int enhancementBonus, int range,
       boolean isSimple) {
     super(ItemType.TYPE_WEAPON, name, baseWeight, baseValue, affixes);
     this.weaponType = weaponType;
@@ -138,8 +147,7 @@ public class Weapon extends Item {
     this.damageType = damageType;
     this.criticalThreshold = criticalThreshold;
     this.criticalMultiplier = criticalMultiplier;
-    this.toHitBonus = toHitBonus;
-    this.toDamageBonus = toDamageBonus;
+    this.enhancementBonus = enhancementBonus;
     this.range = range;
     this.isSimple = isSimple;
   }

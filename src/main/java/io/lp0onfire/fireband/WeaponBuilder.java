@@ -28,14 +28,11 @@ public class WeaponBuilder {
     // TODO check duplicate affixes
     affixes.add(a);
   }
-  private int toHitBonus = 0;
-  public void setToHitBonus(int n){
-    toHitBonus = n;
+  private int enhancementBonus = 0;
+  public void setEnhancementBonus(int n){
+    enhancementBonus = n;
   }
-  private int toDamageBonus = 0;
-  public void setToDamageBonus(int n){
-    toDamageBonus = n;
-  }
+
   private int range = 1;
   private boolean simple = false;
   public void setIsSimple(boolean s){
@@ -54,8 +51,7 @@ public class WeaponBuilder {
     criticalThreshold = base.getCriticalThreshold();
     criticalMultiplier = base.getCriticalMultiplier();
     affixes = new ArrayList<Affix>(base.getAffixes());
-    toHitBonus = base.getToHitBonus();
-    toDamageBonus = base.getToDamageBonus();
+    enhancementBonus = base.getEnhancementBonus();
     range = base.getRange();
     simple = base.isSimpleWeapon();
   }
@@ -90,8 +86,7 @@ public class WeaponBuilder {
     
     affixes = new ArrayList<Affix>(); // TODO
     
-    toHitBonus = obj.optInt("toHit");
-    toDamageBonus = obj.optInt("toDamage");
+    enhancementBonus = obj.optInt("enhancement");
     
     range = obj.optInt("range");
     if(range == 0) range = 1;
@@ -103,6 +98,6 @@ public class WeaponBuilder {
     return new Weapon(name, baseWeight, baseValue,
         type, damageDice, damageDieSize,
         damageType, criticalThreshold, criticalMultiplier,
-        affixes, toHitBonus, toDamageBonus, range, simple);
+        affixes, enhancementBonus, range, simple);
   }
 }

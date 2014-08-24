@@ -14,8 +14,11 @@ public class Affix {
   private boolean prefix = true;
   public boolean isPrefix(){return prefix;}
   
-  private int minimumLevel = 0;
-  public int getMinimumLevel(){return minimumLevel;}
+  // Get the enhancement bonus that is considered
+  // equivalent in value to this affix for the purposes
+  // of determining item value and maximum enchantment level.
+  private int equivalentEnhancementBonus = 0;
+  public int getEquivalentEnhancementBonus(){return equivalentEnhancementBonus;}
   
   private Set<ItemType> allowedItemTypes;
   public Set<ItemType> getAllowedItemTypes(){return allowedItemTypes;}
@@ -23,11 +26,11 @@ public class Affix {
   private List<Effect> effects;
   public List<Effect> getEffects(){return effects;}
   
-  public Affix(String name, boolean prefix, int minimumLevel,
+  public Affix(String name, boolean prefix, int equivalentEnhancementBonus,
       Set<ItemType> allowedItemTypes, List<Effect> effects){
     this.name = name;
     this.prefix = prefix;
-    this.minimumLevel = minimumLevel;
+    this.equivalentEnhancementBonus = equivalentEnhancementBonus;
     this.allowedItemTypes = new HashSet<ItemType>(allowedItemTypes);
     this.effects = new ArrayList<Effect>(effects);
   }
