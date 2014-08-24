@@ -6,8 +6,6 @@ import org.json.JSONObject;
 public class EffectBuilder {
   private double itemWeightFactor = 0.0;
   public void setItemWeightFactor(double d){itemWeightFactor = d;}
-  private double itemValueFactor = 0.0;
-  public void setItemValueFactor(double d){itemValueFactor = d;}
   
   private int weaponToHitBonus = 0;
   public void setWeaponToHitBonus(int i){weaponToHitBonus = i;}
@@ -31,9 +29,6 @@ public class EffectBuilder {
     if(obj.has("weightFactor")){
       setItemWeightFactor(obj.getDouble("weightFactor"));
     }
-    if(obj.has("valueFactor")){
-      setItemValueFactor(obj.getDouble("valueFactor"));
-    }
     if(obj.has("toHitBonus")){
       setWeaponToHitBonus(obj.getInt("toHitBonus"));
     }
@@ -55,7 +50,7 @@ public class EffectBuilder {
   }
   
   public Effect build(){
-    return new Effect(itemWeightFactor, itemValueFactor,
+    return new Effect(itemWeightFactor,
         weaponToHitBonus, weaponDamageFactor, weaponExtraDamageDice,
         armourClassBonus, armourCheckPenaltyReduction,
         armourCountsAsLight);

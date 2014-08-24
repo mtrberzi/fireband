@@ -12,15 +12,15 @@ import org.apache.log4j.Logger;
 public class WeaponGenerator {
   private static Logger log = LogManager.getLogger("WeaponGenerator");
   // Generation parameters
-  private int itemQualityFactor = 0;
-  public void setItemQualityFactor(int iq){
-    this.itemQualityFactor = iq;
+  private int itemLevel = 0;
+  public void setItemLevel(int il){
+    this.itemLevel = il;
   }
-  public int getEffectiveItemQualityFactor(){
-    int eq = itemQualityFactor;
-    // "Guaranteed good" generation boosts this by +10
+  public int getEffectiveItemLevel(){
+    int eq = itemLevel;
+    // "Guaranteed good" generation boosts this by +2 levels
     if(guaranteedGood){
-      eq += 10;
+      eq += 2;
     }
     return eq;
   }
@@ -60,7 +60,7 @@ public class WeaponGenerator {
   public WeaponGenerator(){}
   
   private int goodWeaponPercentChance(){
-    int threshold = 10 + getEffectiveItemQualityFactor();
+    int threshold = 5 + 5*getEffectiveItemLevel();
     if(threshold > 75) threshold = 75;
     return threshold;
   }
@@ -74,7 +74,7 @@ public class WeaponGenerator {
   
   private int greatWeaponPercentChance(){
     int threshold = goodWeaponPercentChance() / 2;
-    if(threshold > 20) threshold = 20;
+    if(threshold > 45) threshold = 45;
     return threshold;
   }
   
@@ -85,28 +85,15 @@ public class WeaponGenerator {
     return (roll <= threshold);
   }
   
-  private boolean rollForCursedWeapon(){
-    if(guaranteedDecent) return false;
-    return rollForGoodWeapon();
-  }
-  
-  private boolean rollForDreadfulWeapon(){
-    if(guaranteedDecent) return false;
-    return rollForGreatWeapon();
-  }
-  
-  private int rollAffixLevel(){
-    // Similar to the "ego generation level" in Angband.
-    // Most of the time this comes out to itemQualityFactor,
-    // but 1 time in 20 we "supercharge" and
-    // use itemQualityFactor * (128 / 1d128) + 1 instead
-    if(RNG.oneIn(20)){
-      log.debug("Supercharged affix level");
-      double superchargeFactor = 128.0 / (double)RNG.roll(128);
-      return (int)Math.ceil(itemQualityFactor * superchargeFactor) + 1;
-    }else{
-      return itemQualityFactor;
-    }
+  private int rollEnhancementLevel(){
+    // Non-artifact weapons cannot have more than +10 of equivalent enhancement.
+    int maximumLevel = (getEffectiveItemLevel()+4) / 3;
+    if(maximumLevel > 10) maximumLevel = 10;
+    double dist = RNG.normal(getEffectiveItemLevel()/2, 1.5);
+    int level = (int)Math.round(dist);
+    if(level < 0) level = 0;
+    else if(level > maximumLevel) level = maximumLevel;
+    return level;
   }
   
   public Weapon generateWeapon(){
@@ -151,111 +138,101 @@ public class WeaponGenerator {
     
     boolean isGood = false;
     boolean isGreat = false;
-    boolean isCursed = false;
-    boolean isDreadful = false;
     boolean isArtifact = false;
     
     isGood = rollForGoodWeapon();
     if(isGood){
       isGreat = rollForGreatWeapon();
       // TODO artifact roll
-    }else{
-      isCursed = rollForCursedWeapon();
-      if(isCursed){
-        isDreadful = rollForDreadfulWeapon();
-      }
     }
     
-    int toHitBonus = 0;
-    int toDamageBonus = 0;
-    int damageDice = baseWeapon.getDamageDice();
     List<Affix> affixes = new ArrayList<Affix>();
-    // TODO balance random perturbations and affixes
     if(isGood){
       if(isGreat){
         log.debug("Great weapon");
-        // Great weapons get +(1d5 + mBonus(5) + mBonus(10)) to hit and to damage
-        toHitBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
-            + RNG.mBonus(10, getEffectiveItemQualityFactor());
-        toDamageBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
-            + RNG.mBonus(10, getEffectiveItemQualityFactor());
-        // Try boosting the damage dice (1 in 10*X*Y for an XdY weapon)
-        // This can happen until the roll fails or until X=9
-        while(damageDice < 9){
-          if(RNG.oneIn(10 * damageDice * baseWeapon.getDamageDieSize())){
-            ++damageDice;
-          }else{
-            break;
-          }
-        }
       }else{
         log.debug("Good weapon");
-        // Good weapons get +(1d5 + mBonus(5)) to hit and to damage
-        toHitBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor());
-        toDamageBonus = RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor());
       }
-    }else if (isCursed){
-      if(isDreadful){
-        log.debug("Dreadful weapon");
-        // Dreadful weapons get -(1d5 + mBonus(5) + mBonus(10)) to hit and to damage
-        toHitBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
-            + RNG.mBonus(10, getEffectiveItemQualityFactor())) * -1;
-        toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())
-            + RNG.mBonus(10, getEffectiveItemQualityFactor())) * -1;
-      }else{
-        log.debug("Cursed weapon");
-        // Cursed weapons get -(1d5 + mBonus(5)) to hit and to damage
-        toHitBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
-        toDamageBonus = (RNG.roll(5) + RNG.mBonus(5, getEffectiveItemQualityFactor())) * -1;
-      }
+    }else{
+      log.debug("Standard weapon");
     }
     
     List<Affix> compatibleAffixes = Affixes.instance.getAffixesByItemType(ItemType.TYPE_WEAPON);
-    int affixLevel = rollAffixLevel();
-    log.debug("Using affix level " + affixLevel);
-    // Exclude affixes below this level
-    Iterator<Affix> it = compatibleAffixes.iterator();
-    while(it.hasNext()){
-      Affix a = it.next();
-      if(a.getMinimumLevel() < affixLevel){
-        // Keep an out-of-depth affix one time in (out-of-depth factor + 1)
-        if(!RNG.oneIn((affixLevel - a.getMinimumLevel()) + 1)){
-          it.remove();
-          continue;
-        }
-      }
-      // Additionally, on good or great objects, throw out any
-      // affix that has any component effect that lowers the value of the item
-      if(isGood || isGreat){
-        for(Effect e : a.getEffects()){
-          if(e.getItemValueFactor() < 0.0){
+    int targetEnhancementLevel;
+    if(isGood){
+      targetEnhancementLevel = rollEnhancementLevel();
+    }else{
+      targetEnhancementLevel = 0;
+    }
+    log.debug("Target enhancement level is " + targetEnhancementLevel);
+    
+    int totalEnhancementFromAffixes = 0;
+    int totalEnhancementFromModifiers = 0; // max +5
+    
+    // roll for modifiers first
+    double dist = RNG.normal((getEffectiveItemLevel()+3)/4, 1.0);
+    totalEnhancementFromModifiers = (int)Math.round(dist);
+    if(totalEnhancementFromModifiers < 0) 
+      totalEnhancementFromModifiers = 0;
+    else if(totalEnhancementFromModifiers > targetEnhancementLevel)
+      totalEnhancementFromModifiers = targetEnhancementLevel;
+    
+    log.debug("Enhancement from modifiers is " + totalEnhancementFromModifiers);
+    
+    if(targetEnhancementLevel - totalEnhancementFromModifiers > 0){
+      // Exclude affixes below this level
+      Iterator<Affix> it = compatibleAffixes.iterator();
+      while(it.hasNext()){
+        Affix a = it.next();
+        // On great objects or anything we insist be "decent", throw out any
+        // affix that lowers the enhancement bonus of the item
+        if(isGreat || guaranteedDecent){
+          if(a.getEquivalentEnhancementBonus() < 0){
             it.remove();
-            break;
+            continue;
           }
         }
       }
-    }
-    // if there is anything left...
-    if(!compatibleAffixes.isEmpty()){
-      // Great items get a few more attempts to receive an affix
-      int affixAttempts = 10;
-      if(isGreat){
-        affixAttempts += 10;
-      }
-      for(int i = 0; i < affixAttempts; ++i){
-        int affixDifficulty = (int)Math.ceil(Math.pow(10, affixes.size() + 1));
-        if(RNG.oneIn(affixDifficulty)){
-          Affix a = RNG.randomEntry(compatibleAffixes);
-          compatibleAffixes.remove(a);
-          affixes.add(a);
+      
+      // if there is anything left...
+      if(!compatibleAffixes.isEmpty()){
+        // Great items get a few more attempts to receive an affix
+        int affixAttempts = 10;
+        if(isGreat){
+          affixAttempts += 10;
         }
-        if(compatibleAffixes.isEmpty()) break;
+        for(int i = 0; i < affixAttempts; ++i){
+          Affix a = RNG.randomEntry(compatibleAffixes);
+          // we can only exceed the target enhancement level on great objects;
+          // even then the maximum is still +10
+          if(isGreat){
+            if(totalEnhancementFromAffixes 
+                + totalEnhancementFromModifiers
+                + a.getEquivalentEnhancementBonus() > 10){
+              continue;
+            }
+          }else{
+            if(totalEnhancementFromAffixes 
+                + totalEnhancementFromModifiers
+                + a.getEquivalentEnhancementBonus() > targetEnhancementLevel){
+              continue;
+            }
+          }
+          int affixDifficulty = (int)Math.ceil(Math.pow(2, a.getEquivalentEnhancementBonus() + 1));
+          if(RNG.oneIn(affixDifficulty)){
+            compatibleAffixes.remove(a);
+            affixes.add(a);
+            totalEnhancementFromAffixes += a.getEquivalentEnhancementBonus();
+          }
+          if(compatibleAffixes.isEmpty()) break;
+        }
       }
     }
     
-    log.debug("To-hit bonus: " + toHitBonus);
-    log.debug("To-damage bonus: " + toDamageBonus);
-    log.debug("Damage dice: " + damageDice);
+    log.debug("Enhancement from affixes is " + totalEnhancementFromAffixes);
+    log.debug("Total actual enhancement bonus is "
+        + (totalEnhancementFromAffixes+totalEnhancementFromModifiers));
+    
     if(!affixes.isEmpty()){
       log.debug("Affixes:");
       for(Affix a : affixes){
@@ -265,9 +242,7 @@ public class WeaponGenerator {
     
     // now generate the weapon
     WeaponBuilder wBuilder = new WeaponBuilder(baseWeapon);
-    wBuilder.setToHitBonus(toHitBonus);
-    wBuilder.setToDamageBonus(toDamageBonus);
-    wBuilder.setDamageDice(damageDice);
+    wBuilder.setEnhancementBonus(totalEnhancementFromModifiers);
     for(Affix a : affixes){
       wBuilder.addAffix(a);
     }

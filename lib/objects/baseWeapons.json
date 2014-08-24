@@ -1,8 +1,8 @@
 {
 "dagger": {
 "name": "%p Dagger%s%u",
-"weight": 12,
-"value": 30,
+"weight": 10,
+"value": 2,
 "type": "WEAPON_EDGED",
 "damage": "1d4",
 "damagetype": "DAMAGE_PIERCING",
@@ -12,8 +12,8 @@
 },
 "maingauche": {
 "name": "%p Main Gauche%s%u",
-"weight": 30,
-"value": 45,
+"weight": 15,
+"value": 4,
 "type": "WEAPON_EDGED",
 "damage": "1d5",
 "damagetype": "DAMAGE_SLASHING",
@@ -22,8 +22,8 @@
 },
 "rapier": {
 "name": "%p Rapier%s%u",
-"weight": 40,
-"value": 75,
+"weight": 20,
+"value": 20,
 "type": "WEAPON_EDGED",
 "damage": "1d6",
 "damagetype": "DAMAGE_PIERCING",
@@ -32,10 +32,10 @@
 },
 "shortsword": {
 "name": "%p Short Sword%s%u",
-"weight": 80,
-"value": 90,
+"weight": 20,
+"value": 10,
 "type": "WEAPON_EDGED",
-"damage": "1d7",
+"damage": "1d6",
 "damagetype": "DAMAGE_SLASHING",
 "threshold": 19,
 "multiplier": 2
@@ -43,10 +43,10 @@
 
 "lightmace": {
 "name": "%p Light Mace%s%u",
-"weight": 120,
-"value": 130,
+"weight": 30,
+"value": 2,
 "type": "WEAPON_BLUNT",
-"damage": "2d4",
+"damage": "1d6",
 "damagetype": "DAMAGE_CRUSHING",
 "threshold": 20,
 "multiplier": 2,
@@ -54,10 +54,10 @@
 },
 "quarterstaff": {
 "name": "%p Quarterstaff%s%u",
-"weight": 150,
-"value": 200,
+"weight": 40,
+"value": 2,
 "type": "WEAPON_BLUNT",
-"damage": "1d9",
+"damage": "1d6",
 "damagetype": "DAMAGE_CRUSHING",
 "threshold": 20,
 "multiplier": 2,
@@ -66,10 +66,10 @@
 
 "spear": {
 "name": "%p Spear%s%u",
-"weight": 50,
-"value": 36,
+"weight": 60,
+"value": 2,
 "type": "WEAPON_POLEARM",
-"damage": "1d6",
+"damage": "1d8",
 "damagetype": "DAMAGE_PIERCING",
 "threshold": 20,
 "multiplier": 3,
@@ -77,10 +77,10 @@
 },
 "halberd": {
 "name": "%p Halberd%s%u",
-"weight": 190,
-"value": 430,
+"weight": 120,
+"value": 10,
 "type": "WEAPON_POLEARM",
-"damage": "3d5",
+"damage": "1d10",
 "damagetype": "DAMAGE_SLASHING",
 "threshold": 20,
 "multiplier": 3
@@ -88,7 +88,7 @@
 
 "sling": {
 "name": "%p Sling%s%u",
-"weight": 5,
+"weight": 30,
 "value": 5,
 "type": "WEAPON_MISSILE",
 "damage": "1d4",
@@ -100,48 +100,48 @@
 },
 "lightcrossbow": {
 "name": "%p Light Crossbow%s%u",
-"weight": 110,
-"value": 140,
+"weight": 40,
+"value": 35,
 "type": "WEAPON_MISSILE",
 "damage": "1d8",
 "damagetype": "DAMAGE_PIERCING",
 "threshold": 19,
 "multiplier": 2,
 "simple": true,
-"range": 2
+"range": 8
 },
 "heavycrossbow": {
 "name": "%p Heavy Crossbow%s%u",
-"weight": 200,
-"value": 300,
+"weight": 80,
+"value": 50,
 "type": "WEAPON_MISSILE",
 "damage": "1d10",
 "damagetype": "DAMAGE_PIERCING",
 "threshold": 19,
 "multiplier": 2,
-"range": 3
+"range": 12
 },
 "shortbow": {
 "name": "%p Short Bow%s%u",
-"weight": 30,
-"value": 50,
+"weight": 20,
+"value": 30,
 "type": "WEAPON_MISSILE",
 "damage": "1d6",
 "damagetype": "DAMAGE_PIERCING",
 "threshold": 20,
 "multiplier": 3,
-"range": 2
+"range": 6
 },
 "longbow": {
 "name": "%p Long Bow%s%u",
-"weight": 40,
-"value": 120,
+"weight": 30,
+"value": 75,
 "type": "WEAPON_MISSILE",
 "damage": "1d8",
 "damagetype": "DAMAGE_PIERCING",
 "threshold": 20,
 "multiplier": 3,
-"range": 3
+"range": 10
 }
 
 }

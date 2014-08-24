@@ -18,8 +18,8 @@ public class AffixBuilder {
   private boolean prefix = true;
   public void setPrefix(boolean b){prefix = b;}
   
-  private int minimumLevel = 0;
-  public void setMinimumLevel(int i){minimumLevel = i;}
+  private int equivalentEnhancementBonus = 0;
+  public void setEquivalentEnhancementBonus(int i){equivalentEnhancementBonus = i;}
   
   private Set<ItemType> allowedItemTypes = new HashSet<ItemType>();
   public void addAllowedItemType(ItemType i){allowedItemTypes.add(i);}
@@ -29,7 +29,7 @@ public class AffixBuilder {
   public AffixBuilder(JSONObject obj) throws JSONException{
     name = obj.getString("name");
     prefix = obj.optBoolean("prefix", false);
-    minimumLevel = obj.optInt("level");
+    equivalentEnhancementBonus = obj.getInt("equivalentBonus");
     JSONArray allowed = obj.getJSONArray("types");
     for(int i = 0; i < allowed.length(); ++i){
       String s = allowed.getString(i);
@@ -45,6 +45,6 @@ public class AffixBuilder {
   }
   
   public Affix build(){
-    return new Affix(name, prefix, minimumLevel, allowedItemTypes, effects);
+    return new Affix(name, prefix, equivalentEnhancementBonus, allowedItemTypes, effects);
   }
 }

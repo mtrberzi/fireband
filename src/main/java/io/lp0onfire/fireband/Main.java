@@ -46,7 +46,7 @@ public class Main {
     loadResources(librariesPath);
     // for fun
     WeaponGenerator wGen = new WeaponGenerator();
-    wGen.setItemQualityFactor(10);
+    wGen.setItemLevel(6);
     wGen.guaranteeDecentObject();
     Weapon w = wGen.generateWeapon();
     log.info(w.getDisplayName());
@@ -54,13 +54,14 @@ public class Main {
     log.info(w.getFullDescription());
     
     ArmourGenerator aGen = new ArmourGenerator();
-    aGen.setItemQualityFactor(10);
+    aGen.setItemLevel(6);
     aGen.guaranteeDecentObject();
     aGen.allowOnlyBodyArmour();
     Armour a = aGen.generateArmour();
     log.info(a.getDisplayName());
     log.info(a.getDescription());
     log.info(a.getFullDescription());
+    
     
     UnitBuilder uBuild = new UnitBuilder();
     uBuild.setName("Robin");
@@ -71,9 +72,6 @@ public class Main {
     uBuild.equip(a);
     Unit u = uBuild.build();
     
-    BattlefieldGenerator fieldGen = new BattlefieldGenerator();
-    Battlefield field = fieldGen.generateBattlefield();
-    log.info(field.dumpTerrainAndFeatures());
   }
   
   private void loadResources(String resourcePath) throws IOException, JSONException{

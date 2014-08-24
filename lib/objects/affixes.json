@@ -2,14 +2,14 @@
 "elvenWeapon": {
 "name": "Elven",
 "prefix": true,
-"level": 10,
+"equivalentBonus": 1,
 "types": ["TYPE_WEAPON"],
-"effects": ["accuracy2", "lightness2"]
+"effects": ["accuracy1", "lightness2"]
 },
 "elvenArmour": {
 "name": "Elven",
 "prefix": true,
-"level": 10,
+"equivalentBonus": 1,
 "types": ["TYPE_ARMOUR"],
 "effects": ["lightness1", "protection1"] 
 },
@@ -17,14 +17,14 @@
 "qualityWeapon": {
 "name": "Quality",
 "prefix": true,
-"level": 3,
+"equivalentBonus": 1,
 "types": ["TYPE_WEAPON"],
 "effects": ["accuracy1", "lightness1"]
 },
 "qualityArmour": {
 "name": "Quality",
 "prefix": true,
-"level": 3,
+"equivalentBonus": 1,
 "types": ["TYPE_ARMOUR"],
 "effects": ["protection1"]
 },
@@ -32,7 +32,7 @@
 "wornObject": {
 "name": "Worn-Out",
 "prefix": true,
-"level": 1,
+"equivalentBonus": -1,
 "types": ["TYPE_WEAPON", "TYPE_ARMOUR"],
 "effects": ["degraded1"]
 },

@@ -33,15 +33,8 @@ public abstract class Item {
   public int getBaseValue(){return baseValue;}
   public int getEffectiveValue(){
     int base = getBaseValue();
-    double fin = base;
-    // TODO perturbation factors on weapons/armour
-    for(Affix a : getAffixes()){
-      for(Effect e : a.getEffects()){
-        fin += base * e.getItemValueFactor();
-      }
-    }
-    if(fin < 0.0) fin = 0.0;
-    return (int)Math.floor(fin);
+    // TODO effective enhancement bonus from affixes/magic
+    return base;
   }
   
   private List<Affix> affixes;
@@ -72,8 +65,7 @@ public abstract class Item {
     // The format string will look like "%p name%s"
     // We substitute %p for the particle (a/an/the/count)
     // followed by zero or more prefixes;
-    // each prefix is preceded by a space,
-    // and a comma if it is not the first.
+    // each prefix is preceded by a space.
     // %s is substituted for the appropriate singular/plural ending.
     // %u is substituted for zero or more suffixes;
     // each suffix is preceded by one of the following:
@@ -96,15 +88,9 @@ public abstract class Item {
           }else{
             sb.append(count);
           }
-          boolean firstPrefix = true;
           for(Affix a : item.getAffixes()){
             if(a.isPrefix()){
-              if(firstPrefix){
-                sb.append(" ").append(a.getName());
-                firstPrefix = false;
-              }else{
-                sb.append(", ").append(a.getName());
-              }
+              sb.append(" ").append(a.getName());
             }
           }
         } break;
